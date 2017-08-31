@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire</title>
+</head>
+<body>
+    <h1>Ceci est un formulaire</h1>
+    <form method="post" id="form">
+        <p>
+            <div id="blocType">
+                <label for="typeCarte">Quel type de carte?</label><br />
+                <select name="typeCarte" id="typeCarte">
+                    <option value="Propriete">Propriété</option>
+                    <option value="Gare">Gare</option>
+                    <option value="Chance">Chance</option>
+                    <option value="Caisse de communaute">Caisse de communauté</option>
+                    <option value="Services publiques">Services publiques</option>
+                    <option value="Impots et taxe">Impôts et taxe</option>
+                    <option value="Prison">Prison</option>
+                    <option value="Aller en prison">Aller en prison</option>
+                    <option value="Parking gratuit">Parking gratuit</option>
+                </select>
+            </div>
+            <div id="blocService" style="display: none">
+                <label for="service">Quel type de Service publique?</label><br />
+                <select name="service" id="service">
+                    <option value="Electricite">Electricité</option>
+                    <option value="Eau">Eau</option>
+                </select>
+            </div>
+            <div id="blocTaxe" style="display: none">
+                <label for="taxe">Quel type d'impôts et taxe?</label><br />
+                <select name="taxe" id="taxe">
+                    <option value="luxe">Objet de luxe</option>
+                    <option value="impots">Impôts</option>
+                </select>
+            </div>
+            <div id="blocName">
+                <label for="name">Nom de la carte</label><br />
+                <input id="name" name="name" value="Nom">
+            </div>
+            <div id="blocColor">
+                <label for="color">Couleur de la famille de carte</label><br />
+                <select name="color" id="color">
+                    <option value="red">Rouge</option>
+                    <option value="blue">Bleu</option>
+                    <option value="orange">Orange</option>
+                    <option value="black">Noir</option>
+                    <option value="green">Vert</option>
+                    <option value="purple">Violet</option>
+                    <option value="pink">Rose</option>
+                    <option value="yellow">Jaune</option>
+                </select>
+            </div>
+            <div id="blocPrice">
+                <label for="name">Prix</label><br />
+                <input type="number" id="price" name="price" value="1"/>
+            </div>
+            <input type="button" value="valider" id="bouton" onclick="send()">
+        </p>
+    </form>
+</body>
+<script>
+    var card = document.getElementById('typeCarte');
+    // change the form
+    card.addEventListener('change', function() {
+        let name = document.getElementById("blocName");
+        let price = document.getElementById("blocPrice");
+        let color = document.getElementById("blocColor");
+        let service = document.getElementById("blocService");
+        let taxe = document.getElementById("blocTaxe");
+
+        let value = card.options[card.selectedIndex].value;
+
+        name.style.display = "none";
+        price.style.display = "none";
+        color.style.display = "none";
+        service.style.display = "none";
+        taxe.style.display = "none";
+
+        if(value == "Propriete"){
+            name.style.display = "block";
+            price.style.display = "block";
+            color.style.display = "block";
+        }else if(value == "Gare"){
+            name.style.display = "block";
+        }else if(value == "Services publiques"){
+            service.style.display = "block";
+        }else if(value == "Impots et taxe") {
+            taxe.style.display = "block";
+        }
+    })
+
+    //send data for the monopoly
+    function send() {
+        let value = card.options[card.selectedIndex].value;
+        console.log(value);
+        if(value == "Propriete"){
+            console.log(document.getElementById("name").value);
+            console.log(document.getElementById("color").value);
+            console.log(document.getElementById("price").value);
+            return{
+                type : value,
+                name : document.getElementById("name").value,
+                color : document.getElementById("color").value,
+                price : document.getElementById("price").value
+            };
+        }else if(value == "Gare"){
+            console.log(document.getElementById("name").value);
+            return{
+                type : value,
+                name : document.getElementById("name").value
+            };
+        }else if(value == "Services publiques"){
+            let service = document.getElementById("service");
+            console.log(service.options[service.selectedIndex].value);
+            return{
+                type : value,
+                service : service.options[service.selectedIndex].value
+            };
+        }else if(value == "Impots et taxe") {
+            let taxe = document.getElementById("taxe");
+            console.log(taxe.options[taxe.selectedIndex].value);
+            return{
+                type : value,
+                taxe : taxe.options[taxe.selectedIndex].value
+            };
+        }
+
+        return{type : value};
+    }
+</script>
+</html>
