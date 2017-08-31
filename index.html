@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rends l'argent</title>
+    <style>
+        canvas {
+            height: 700px;
+            width: 700px;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="700" height="700"></canvas>
+</body>
+<script>
+
+    function drawCircle(ctx, x, y, radius){
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        ctx.fill();
+    }
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const squareSize = 90;
+    const rectangleWidth = 58;
+    let y = 0;
+    let x = 0;
+    let directionX = 1;
+    let directionY = 0;
+    for(let i = 0; i < 40; i++){
+        if(i % 2 === 0){
+            ctx.fillStyle = "yellow";
+        }else{
+            ctx.fillStyle = "tomato";
+        }
+
+        if(i % 10 === 0){
+            if(directionX === -1){
+                x -= squareSize-rectangleWidth;
+            }
+            ctx.fillRect(x, y, squareSize, squareSize);
+            if(directionX === 1 && i !== 0){
+                directionX = 0;
+                directionY = 1;
+                y+= squareSize;
+            }else if(directionY === 1){
+                directionX = -1;
+                directionY = 0;
+                x -= rectangleWidth;
+            }else if(directionX === -1){
+                directionX = 0;
+                directionY = -1;
+                y-= rectangleWidth;
+            }else if(directionX === 1){
+                x+= squareSize;
+            }
+        }else{
+            if(directionX === 1 || directionX === -1){
+                ctx.fillRect(x, y, rectangleWidth, squareSize);
+                if(directionX === 1){
+                    drawCircle(ctx, x + rectangleWidth/2, y + squareSize + 10, 5);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(x + 10, y + squareSize - 20, rectangleWidth - 20, 10);
+                }else{
+                    drawCircle(ctx, x + rectangleWidth/2, y -10, 5);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(x + 10, y + 10, rectangleWidth - 20, 10);
+                }
+                x += rectangleWidth*directionX;
+                y += squareSize*directionY;
+
+            }else if(directionY === 1 || directionY === -1){
+                ctx.fillRect(x, y, squareSize, rectangleWidth);
+                if(directionY === 1){
+                    drawCircle(ctx, x - 10, y + rectangleWidth/2, 5);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(x + 10, y + 10, 10, rectangleWidth - 20);
+                }else{
+                    drawCircle(ctx, x + squareSize + 10, y + rectangleWidth/2, 5);
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(x + squareSize - 20, y + 10, 10, rectangleWidth - 20);
+                }
+                x += squareSize*directionX;
+                y += rectangleWidth*directionY;
+            }
+        }
+    }
+
+</script>
+</html>
