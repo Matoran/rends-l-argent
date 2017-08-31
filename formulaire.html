@@ -2,66 +2,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Formulaire</title>
+    <title>Rends l'argent</title>
+    <style>
+        canvas {
+            height: 710px;
+            width: 710px;
+            float: left;
+        }
+
+        form{
+            float: left;
+        }
+    </style>
 </head>
 <body>
-    <h1>Ceci est un formulaire</h1>
-    <form method="post" id="form">
-        <p>
-            <div id="blocType">
-                <label for="typeCarte">Quel type de carte?</label><br />
-                <select name="typeCarte" id="typeCarte">
-                    <option value="Propriete">Propriété</option>
-                    <option value="Gare">Gare</option>
-                    <option value="Chance">Chance</option>
-                    <option value="Caisse de communaute">Caisse de communauté</option>
-                    <option value="Services publiques">Services publiques</option>
-                    <option value="Impots et taxe">Impôts et taxe</option>
-                    <option value="Prison">Prison</option>
-                    <option value="Aller en prison">Aller en prison</option>
-                    <option value="Parking gratuit">Parking gratuit</option>
-                </select>
-            </div>
-            <div id="blocService" style="display: none">
-                <label for="service">Quel type de Service publique?</label><br />
-                <select name="service" id="service">
-                    <option value="Electricite">Electricité</option>
-                    <option value="Eau">Eau</option>
-                </select>
-            </div>
-            <div id="blocTaxe" style="display: none">
-                <label for="taxe">Quel type d'impôts et taxe?</label><br />
-                <select name="taxe" id="taxe">
-                    <option value="luxe">Objet de luxe</option>
-                    <option value="impots">Impôts</option>
-                </select>
-            </div>
-            <div id="blocName">
-                <label for="name">Nom de la carte</label><br />
-                <input id="name" name="name" value="Nom">
-            </div>
-            <div id="blocColor">
-                <label for="color">Couleur de la famille de carte</label><br />
-                <select name="color" id="color">
-                    <option value="red">Rouge</option>
-                    <option value="blue">Bleu</option>
-                    <option value="orange">Orange</option>
-                    <option value="black">Noir</option>
-                    <option value="green">Vert</option>
-                    <option value="purple">Violet</option>
-                    <option value="pink">Rose</option>
-                    <option value="yellow">Jaune</option>
-                </select>
-            </div>
-            <div id="blocPrice">
-                <label for="name">Prix</label><br />
-                <input type="number" id="price" name="price" value="1"/>
-            </div>
-            <input type="button" value="valider" id="bouton" onclick="send()">
-        </p>
-    </form>
+<canvas id="canvas" width="710" height="710"></canvas>
+<form method="post" id="form">
+    <p>
+    <div id="blocType" style="display: none">
+        <label for="typeCarte">Quel type de carte?</label><br />
+        <select name="typeCarte" id="typeCarte">
+            <option value="Propriete">Propriété</option>
+            <option value="Gare">Gare</option>
+            <option value="Chance">Chance</option>
+            <option value="Caisse de communaute">Caisse de communauté</option>
+            <option value="Services publiques">Services publiques</option>
+            <option value="Impots et taxe">Impôts et taxe</option>
+            <option value="Prison">Prison</option>
+            <option value="Aller en prison">Aller en prison</option>
+            <option value="Parking gratuit">Parking gratuit</option>
+        </select>
+    </div>
+    <div id="blocService" style="display: none">
+        <label for="service">Quel type de Service publique?</label><br />
+        <select name="service" id="service">
+            <option value="Electricite">Electricité</option>
+            <option value="Eau">Eau</option>
+        </select>
+    </div>
+    <div id="blocTaxe" style="display: none">
+        <label for="taxe">Quel type d'impôts et taxe?</label><br />
+        <select name="taxe" id="taxe">
+            <option value="luxe">Objet de luxe</option>
+            <option value="impots">Impôts</option>
+        </select>
+    </div>
+    <div id="blocName" style="display: none">
+        <label for="name">Nom de la carte</label><br />
+        <input id="name" name="name" value="Nom">
+    </div>
+    <div id="blocColor" style="display: none">
+        <label for="color">Couleur de la famille de carte</label><br />
+        <select name="color" id="color">
+            <option value="red">Rouge</option>
+            <option value="blue">Bleu</option>
+            <option value="orange">Orange</option>
+            <option value="black">Noir</option>
+            <option value="green">Vert</option>
+            <option value="purple">Violet</option>
+            <option value="pink">Rose</option>
+            <option value="yellow">Jaune</option>
+        </select>
+    </div>
+    <div id="blocPrice" style="display: none">
+        <label for="name">Prix</label><br />
+        <input type="number" id="price" name="price" value="1"/>
+    </div>
+    <input type="button" value="valider" id="button" onclick="send()" style="display: none">
+    </p>
+</form>
 </body>
+<script src="easeljs-0.8.2.min.js"></script>
 <script>
+
+    let stage = new createjs.Stage("canvas");
+
+    let square = new createjs.Shape();
+    let commandSquare = square.graphics.beginFill("black").command;
+    square.graphics.drawRect(0, 0, 90, 58);
+    commandSquare.style = "tomato";
+    square.x = 100;
+    square.y = 100;
+
+    square.on("click", function () {
+        let type = document.getElementById("blocType");
+        let name = document.getElementById("blocName");
+        let price = document.getElementById("blocPrice");
+        let color = document.getElementById("blocColor");
+        let button = document.getElementById("button")
+        type.style.display = "block";
+        name.style.display = "block";
+        price.style.display = "block";
+        color.style.display = "block";
+        button.style.display = "block";
+    });
+
+    stage.addChild(square);
+    stage.update();
+
     var card = document.getElementById('typeCarte');
     // change the form
     card.addEventListener('change', function() {
@@ -92,43 +130,37 @@
         }
     })
 
-    //send data for the monopoly
+    let label1 = new createjs.Text("", "12px Arial", "#000000");
+
     function send() {
         let value = card.options[card.selectedIndex].value;
-        console.log(value);
+        let text = value;
         if(value == "Propriete"){
-            console.log(document.getElementById("name").value);
-            console.log(document.getElementById("color").value);
-            console.log(document.getElementById("price").value);
-            return{
-                type : value,
-                name : document.getElementById("name").value,
-                color : document.getElementById("color").value,
-                price : document.getElementById("price").value
-            };
+            let name = document.getElementById("name").value;
+            let color = document.getElementById("color").value;
+            let price = document.getElementById("price").value;
+            text += "\n" + name + "\n" + color + "\n" + price;
         }else if(value == "Gare"){
-            console.log(document.getElementById("name").value);
-            return{
-                type : value,
-                name : document.getElementById("name").value
-            };
+            let name = document.getElementById("name").value;
+            text +=  "\n" + name;
         }else if(value == "Services publiques"){
             let service = document.getElementById("service");
-            console.log(service.options[service.selectedIndex].value);
-            return{
-                type : value,
-                service : service.options[service.selectedIndex].value
-            };
+            service = service.options[service.selectedIndex].value;
+            text += "\n" + service;
         }else if(value == "Impots et taxe") {
             let taxe = document.getElementById("taxe");
-            console.log(taxe.options[taxe.selectedIndex].value);
-            return{
-                type : value,
-                taxe : taxe.options[taxe.selectedIndex].value
-            };
+            taxe = taxe.options[taxe.selectedIndex].value;
+            text +=  "\n" + taxe;
         }
 
-        return{type : value};
+        label1.text = text;
+        label1.x = square.x;
+        label1.y = square.y;
+        label1.alpha = 0.5;
+
+
+        stage.addChild(label1);
+        stage.update();
     }
 </script>
 </html>
