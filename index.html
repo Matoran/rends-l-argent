@@ -9,21 +9,42 @@
             width: 700px;
         }
     </style>
+    <script src="Board.js"></script>
 </head>
 <body>
 <canvas id="canvas" width="700" height="700"></canvas>
 </body>
 <script>
+    let imgTrain = new Image();
+    imgTrain.src = 'img/train.png';
+    let imgChance = new Image();
+    imgChance.src = 'img/chance.png';
+    let imgCommunityChest = new Image();
+    imgCommunityChest.src = 'img/chest.png';
+    let imgTax = new Image();
+    imgTax.src = 'img/tax.png';
+    let imgHouse = new Image();
+    imgHouse.src = 'img/house.png';
+    let imgHotel = new Image();
+    imgHotel.src = 'img/hotel.png';
+    let board = Board();
+
 
     function drawCircle(ctx, x, y, radius){
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
         ctx.fill();
     }
+
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext("2d");
+
+
+
     ctx.fillStyle = "green";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "12px Arial";
+
     const squareSize = 90;
     const rectangleWidth = 58;
     let y = 0;
@@ -31,6 +52,7 @@
     let directionX = 1;
     let directionY = 0;
     for(let i = 0; i < 40; i++){
+        let cell = board.squares()[i];
         if(i % 2 === 0){
             ctx.fillStyle = "yellow";
         }else{
@@ -42,6 +64,8 @@
                 x -= squareSize-rectangleWidth;
             }
             ctx.fillRect(x, y, squareSize, squareSize);
+            ctx.fillStyle = "black";
+            ctx.fillText(cell.name(),x,y+20);
             if(directionX === 1 && i !== 0){
                 directionX = 0;
                 directionY = 1;
@@ -60,28 +84,53 @@
         }else{
             if(directionX === 1 || directionX === -1){
                 ctx.fillRect(x, y, rectangleWidth, squareSize);
-                if(directionX === 1){
-                    drawCircle(ctx, x + rectangleWidth/2, y + squareSize + 10, 5);
-                    ctx.fillStyle = "red";
-                    ctx.fillRect(x + 10, y + squareSize - 20, rectangleWidth - 20, 10);
-                }else{
-                    drawCircle(ctx, x + rectangleWidth/2, y -10, 5);
-                    ctx.fillStyle = "red";
-                    ctx.fillRect(x + 10, y + 10, rectangleWidth - 20, 10);
+                if(cell.isProperty()){
+                    if(directionX === 1){
+                        ctx.fillStyle = cell.owner.color();
+                        drawCircle(ctx, x + rectangleWidth/2, y + squareSize + 10, 5);
+                        ctx.fillStyle = cell.color();
+                        ctx.fillRect(x + 10, y + squareSize - 20, rectangleWidth - 20, 10);
+                    }else{
+                        ctx.fillStyle = cell.owner.color();
+                        drawCircle(ctx, x + rectangleWidth/2, y -10, 5);
+                        ctx.fillStyle = cell.color();
+                        ctx.fillRect(x + 10, y + 10, rectangleWidth - 20, 10);
+                    }
+                }else if(cell.isTrain()){
+                    ctx.drawImage(imgTrain, x, y);
+                }else if(cell.isChance()){
+                    ctx.drawImage(imgChance, x, y);
+                }else if(cell.isCommunityChest()){
+                    ctx.drawImage(imgCommunityChest, x, y);
+                }else if(cell.isTax()){
+                    ctx.drawImage(imgTax, x, y);
                 }
+
                 x += rectangleWidth*directionX;
                 y += squareSize*directionY;
 
             }else if(directionY === 1 || directionY === -1){
                 ctx.fillRect(x, y, squareSize, rectangleWidth);
-                if(directionY === 1){
-                    drawCircle(ctx, x - 10, y + rectangleWidth/2, 5);
-                    ctx.fillStyle = "red";
-                    ctx.fillRect(x + 10, y + 10, 10, rectangleWidth - 20);
-                }else{
-                    drawCircle(ctx, x + squareSize + 10, y + rectangleWidth/2, 5);
-                    ctx.fillStyle = "red";
-                    ctx.fillRect(x + squareSize - 20, y + 10, 10, rectangleWidth - 20);
+                if(cell.isProperty()) {
+                    if (directionY === 1) {
+                        ctx.fillStyle = cell.owner.color();
+                        drawCircle(ctx, x - 10, y + rectangleWidth / 2, 5);
+                        ctx.fillStyle = cell.color();
+                        ctx.fillRect(x + 10, y + 10, 10, rectangleWidth - 20);
+                    } else {
+                        ctx.fillStyle = cell.owner.color();
+                        drawCircle(ctx, x + squareSize + 10, y + rectangleWidth / 2, 5);
+                        ctx.fillStyle = cell.color();
+                        ctx.fillRect(x + squareSize - 20, y + 10, 10, rectangleWidth - 20);
+                    }
+                }else if(cell.isTrain()){
+                    ctx.drawImage(imgTrain, x, y);
+                }else if(cell.isChance()){
+                    ctx.drawImage(imgChance, x, y);
+                }else if(cell.isCommunityChest()){
+                    ctx.drawImage(imgCommunityChest, x, y);
+                }else if(cell.isTax()){
+                    ctx.drawImage(imgTax, x, y);
                 }
                 x += squareSize*directionX;
                 y += rectangleWidth*directionY;
