@@ -70,34 +70,62 @@
     </div>
     <input type="button" value="valider" id="button" onclick="send()" style="display: none">
     </p>
+    <input type="hidden" id="id" value="">
 </form>
 </body>
 <script src="easeljs-0.8.2.min.js"></script>
 <script>
 
-    let stage = new createjs.Stage("canvas");
-
-    let square = new createjs.Shape();
-    let commandSquare = square.graphics.beginFill("black").command;
-    square.graphics.drawRect(0, 0, 90, 58);
-    commandSquare.style = "tomato";
-    square.x = 100;
-    square.y = 100;
-
-    square.on("click", function () {
+    function squareOnClick(identifiant) {
         let type = document.getElementById("blocType");
         let name = document.getElementById("blocName");
         let price = document.getElementById("blocPrice");
         let color = document.getElementById("blocColor");
-        let button = document.getElementById("button")
+        let button = document.getElementById("button");
+        let id = document.getElementById("id");
+        id.value = identifiant;
         type.style.display = "block";
         name.style.display = "block";
         price.style.display = "block";
         color.style.display = "block";
         button.style.display = "block";
-    });
+    }
 
-    stage.addChild(square);
+    let stage = new createjs.Stage("canvas");
+
+    function strcutSquare(posx,posy, id){
+        return{
+            posx : posx,
+            posy : posy,
+            width : 90,
+            heigth : 58,
+            id : id
+        };
+    }
+
+    function square(squareParam) {
+        let square = new createjs.Shape();
+        let commandSquare = square.graphics.beginFill("black").command;
+        square.graphics.drawRect(0, 0, squareParam.width, squareParam.heigth);
+        square.x = squareParam.posx;
+        square.y = squareParam.posy;
+        commandSquare.style = "tomato";
+        square.on("click", function(){
+            squareOnClick(squareParam.id);
+        });
+        let label = new createjs.Text("", "12px Arial", "#000000");
+        return{
+            square : square,
+            commandeSquare: commandSquare,
+            label : label
+        };
+    }
+
+    let tabSquare = [square(strcutSquare(100,100,0)), square(strcutSquare(100,200,1))];
+
+    tabSquare.forEach(function (s) {
+        stage.addChild(s.square);
+    });
     stage.update();
 
     var card = document.getElementById('typeCarte');
@@ -128,17 +156,32 @@
         }else if(value == "Impots et taxe") {
             taxe.style.display = "block";
         }
-    })
+    });
 
-    let label1 = new createjs.Text("", "12px Arial", "#000000");
+    function cleanForm(){
+        let type = document.getElementById("blocType");
+        let name = document.getElementById("blocName");
+        let price = document.getElementById("blocPrice");
+        let color = document.getElementById("blocColor");
+        let button = document.getElementById("button");
+        let id = document.getElementById("id");
+        id.value = 0;
+        type.style.display = "none";
+        name.style.display = "none";
+        price.style.display = "none";
+        color.style.display = "none";
+        button.style.display = "none";
+    }
 
     function send() {
+        let id = document.getElementById("id").value;
         let value = card.options[card.selectedIndex].value;
         let text = value;
         if(value == "Propriete"){
             let name = document.getElementById("name").value;
             let color = document.getElementById("color").value;
             let price = document.getElementById("price").value;
+            tabSquare[id].commandeSquare.style = color;
             text += "\n" + name + "\n" + color + "\n" + price;
         }else if(value == "Gare"){
             let name = document.getElementById("name").value;
@@ -152,15 +195,16 @@
             taxe = taxe.options[taxe.selectedIndex].value;
             text +=  "\n" + taxe;
         }
+        //console.log(document.getElementById("id").value);
+        tabSquare[id].label.text = text;
+        tabSquare[id].label.x = tabSquare[id].square.x;
+        tabSquare[id].label.y = tabSquare[id].square.y;
+        tabSquare[id].label.alpha = 0.5;
 
-        label1.text = text;
-        label1.x = square.x;
-        label1.y = square.y;
-        label1.alpha = 0.5;
 
-
-        stage.addChild(label1);
+        stage.addChild( tabSquare[id].label);
         stage.update();
+        cleanForm();
     }
 </script>
 </html>
