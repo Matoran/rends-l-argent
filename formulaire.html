@@ -75,6 +75,32 @@
 </body>
 <script src="easeljs-0.8.2.min.js"></script>
 <script>
+    let stage = new createjs.Stage("canvas");
+
+    let img = new Image();
+    img.src = "img/dice-1-th.png";
+    let img2 = new Image();
+    img2.src = "img/dice-1-th.png";
+
+    function drawImage(posx,posy, event) {
+        let image = event.target;
+        let bitmap = new createjs.Bitmap(image);
+        bitmap.x = posx;
+        bitmap.y = posy;
+        bitmap.addEventListener("click", onClick);
+        stage.addChild(bitmap);
+        stage.update();
+    }
+
+    img.onload = function (event) {drawImage(0,0, event);};
+    img2.onload = function (event) {drawImage(100,0, event);};
+
+    function onClick() {
+        let rand = Math.floor((Math.random() * 6) + 1);
+        let rand2 = Math.floor((Math.random() * 6) + 1);
+        img.src = "img/dice-" + rand + "-th.png";
+        img2.src = "img/dice-" + rand2 + "-th.png";
+    }
 
     function squareOnClick(identifiant) {
         let type = document.getElementById("blocType");
@@ -89,9 +115,11 @@
         price.style.display = "block";
         color.style.display = "block";
         button.style.display = "block";
+        let card = document.getElementById('typeCarte');
+        card.selectedIndex = "Propriete";
     }
 
-    let stage = new createjs.Stage("canvas");
+
 
     function strcutSquare(posx,posy, id){
         return{
@@ -165,12 +193,16 @@
         let color = document.getElementById("blocColor");
         let button = document.getElementById("button");
         let id = document.getElementById("id");
+        let service = document.getElementById("blocService");
+        let taxe = document.getElementById("blocTaxe");
         id.value = 0;
         type.style.display = "none";
         name.style.display = "none";
         price.style.display = "none";
         color.style.display = "none";
         button.style.display = "none";
+        service.style.display = "none";
+        taxe.style.display = "none";
     }
 
     function send() {
