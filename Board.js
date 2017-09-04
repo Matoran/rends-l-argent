@@ -228,6 +228,7 @@ function Board() {
                 actionsList.play = play;
             }
             return actionsList;
-        }
+        },
+        players: () => players
     }
 }

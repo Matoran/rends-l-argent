@@ -5,8 +5,8 @@
     <title>Rends l'argent</title>
     <style>
         canvas {
-            height: 710px;
-            width: 710px;
+            height: 700px;
+            width: 700px;
             float: left;
         }
 
@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-<canvas id="canvas" width="710" height="710"></canvas>
+<canvas id="canvas" width="700" height="700"></canvas>
 <form method="post" id="form">
     <p>
     <div id="blocType" style="display: none">
@@ -74,33 +74,11 @@
 </form>
 </body>
 <script src="easeljs-0.8.2.min.js"></script>
+<script src="Board.js"></script>
 <script>
+    //----------------draw board-----------------------
+    let board = Board();
     let stage = new createjs.Stage("canvas");
-
-    let img = new Image();
-    img.src = "img/dice-1-th.png";
-    let img2 = new Image();
-    img2.src = "img/dice-1-th.png";
-
-    function drawImage(posx,posy, event) {
-        let image = event.target;
-        let bitmap = new createjs.Bitmap(image);
-        bitmap.x = posx;
-        bitmap.y = posy;
-        bitmap.addEventListener("click", onClick);
-        stage.addChild(bitmap);
-        stage.update();
-    }
-
-    img.onload = function (event) {drawImage(0,0, event);};
-    img2.onload = function (event) {drawImage(100,0, event);};
-
-    function onClick() {
-        let rand = Math.floor((Math.random() * 6) + 1);
-        let rand2 = Math.floor((Math.random() * 6) + 1);
-        img.src = "img/dice-" + rand + "-th.png";
-        img2.src = "img/dice-" + rand2 + "-th.png";
-    }
 
     function squareOnClick(identifiant) {
         let type = document.getElementById("blocType");
@@ -119,15 +97,17 @@
         card.selectedIndex = "Propriete";
     }
 
-
-
-    function strcutSquare(posx,posy, id){
+    function strcutSquare(posx,posy, w, h, color, id, dx, dy, cell){
         return{
             posx : posx,
             posy : posy,
-            width : 90,
-            heigth : 58,
-            id : id
+            width : w,
+            heigth : h,
+            color : color,
+            id : id,
+            directionX : dx,
+            directionY : dy,
+            cell : cell
         };
     }
 
@@ -137,7 +117,7 @@
         square.graphics.drawRect(0, 0, squareParam.width, squareParam.heigth);
         square.x = squareParam.posx;
         square.y = squareParam.posy;
-        commandSquare.style = "tomato";
+        commandSquare.style = squareParam.color;
         square.on("click", function(){
             squareOnClick(squareParam.id);
         });
@@ -145,17 +125,157 @@
         return{
             square : square,
             commandeSquare: commandSquare,
-            label : label
+            label : label,
+            struct : squareParam,
+            in : undefined,
+            circle : undefined,
+            img : undefined
+        };
+    }
+    
+    function circle(posx, posy, r) {
+        let circle = new createjs.Shape();
+        circle.graphics.beginFill("red").drawCircle(0, 0, r);
+        circle.x = posx;
+        circle.y = posy;
+        stage.addChild(circle);
+        return circle;
+    }
+
+    function image(src, posx, posy){
+        let img = new Image();
+        img.src = src;
+        img.onload = function (event) {
+            let image = event.target;
+            let bitmap = new createjs.Bitmap(image);
+            bitmap.x = posx;
+            bitmap.y = posy;
+            stage.addChild(bitmap);
+            stage.update();
         };
     }
 
-    let tabSquare = [square(strcutSquare(100,100,0)), square(strcutSquare(100,200,1))];
+    function text(txt, posx, posy, id){
+        tabSquare[id].label.text = txt;
+        tabSquare[id].label.x = posx;
+        tabSquare[id].label.y = posy;
+        tabSquare[id].label.alpha = 0.5;
+        stage.addChild( tabSquare[id].label);
+        stage.update();
+    }
+
+    //draw background
+    let background = new createjs.Shape();
+    background.graphics.beginFill("green").drawRect(0,0,700,700);
+    stage.addChild(background);
+
+
+    //draw board
+    let tabSquare = [];
+    let color;
+    const squareSize = 90;
+    const rectangleWidth = 58;
+    let y = 0;
+    let x = 0;
+    let directionX = 1;
+    let directionY = 0;
+    for(let i = 0; i < 40; i++){
+        let cell = board.squares()[i];
+        if(i % 2 === 0){
+            color = "yellow";
+        }else{
+            color = "tomato";
+        }
+
+        if(i % 10 === 0){
+            if(directionX === -1){
+                x -= squareSize-rectangleWidth;
+            }
+            tabSquare.push(square(strcutSquare(x, y, squareSize, squareSize,color,i,directionX,directionY,cell)));
+            color = "black";
+            text(cell.name(),x,y+20,i);
+            if(directionX === 1 && i !== 0){
+                directionX = 0;
+                directionY = 1;
+                y+= squareSize;
+            }else if(directionY === 1){
+                directionX = -1;
+                directionY = 0;
+                x -= rectangleWidth;
+            }else if(directionX === -1){
+                directionX = 0;
+                directionY = -1;
+                y-= rectangleWidth;
+            }else if(directionX === 1){
+                x+= squareSize;
+            }
+        }else{
+            if(directionX === 1 || directionX === -1){
+                tabSquare.push(square(strcutSquare(x, y, rectangleWidth, squareSize, color, i,directionX,directionY,cell)));
+                if(cell.isProperty()){
+                    if(directionX === 1){
+                        color = cell.owner.color();
+                        tabSquare[i].circle = circle(x + rectangleWidth/2, y + squareSize + 10, 5);
+                        color = cell.color();
+                        tabSquare[i].in = square(strcutSquare(x + 10, y + squareSize - 20, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
+                    }else{
+                        color = cell.owner.color();
+                        tabSquare[i].circle = circle(x + rectangleWidth/2, y -10, 5);
+                        color = cell.color();
+                        tabSquare[i].in = square(strcutSquare(x + 10, y + 10, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
+                    }
+                }else if(cell.isTrain()){
+                    tabSquare[i].img = image("img/train.png", x, y);
+                }else if(cell.isChance()){
+                    tabSquare[i].img = image("img/chance.png", x, y);
+                }else if(cell.isCommunityChest()){
+                    tabSquare[i].img = image("img/chest.png", x, y);
+                }else if(cell.isTax()){
+                    tabSquare[i].img = image("img/tax.png", x, y);
+                }
+
+                x += rectangleWidth*directionX;
+                y += squareSize*directionY;
+
+            }else if(directionY === 1 || directionY === -1){
+                tabSquare.push(square(strcutSquare(x, y, squareSize, rectangleWidth,color,i,directionX,directionY,cell)));
+                if(cell.isProperty()) {
+                    if (directionY === 1) {
+                        color = cell.owner.color();
+                        tabSquare[i].circle = circle(x - 10, y + rectangleWidth / 2, 5);
+                        color = cell.color();
+                        tabSquare[i].in = square(strcutSquare(x + 10, y + 10, 10, rectangleWidth - 20,color,i,directionX,directionY,cell));
+                    } else {
+                        color = cell.owner.color();
+                        tabSquare[i].circle = circle(x + squareSize + 10, y + rectangleWidth / 2, 5);
+                        color = cell.color();
+                        tabSquare[i].in = square(strcutSquare(x + squareSize - 20, y + 10, 10, rectangleWidth - 20,color,i,directionX,directionY,cell));
+                    }
+                }else if(cell.isTrain()){
+                    tabSquare[i].img = image("img/train.png", x, y);
+                }else if(cell.isChance()){
+                    tabSquare[i].img = image("img/chance.png", x, y);
+                }else if(cell.isCommunityChest()){
+                    tabSquare[i].img = image("img/chest.png", x, y);
+                }else if(cell.isTax()){
+                    tabSquare[i].img = image("img/tax.png", x, y);
+                }
+                x += squareSize*directionX;
+                y += rectangleWidth*directionY;
+            }
+        }
+    }
 
     tabSquare.forEach(function (s) {
         stage.addChild(s.square);
+        stage.addChild(s.label);
+        if(s.in !== undefined){
+            stage.addChild(s.in.square);
+        }
     });
     stage.update();
 
+    //----------Form--------------------
     var card = document.getElementById('typeCarte');
     // change the form
     card.addEventListener('change', function() {
@@ -233,10 +353,43 @@
         tabSquare[id].label.y = tabSquare[id].square.y;
         tabSquare[id].label.alpha = 0.5;
 
-
         stage.addChild( tabSquare[id].label);
         stage.update();
         cleanForm();
     }
+
+    //----------Move Player--------
+    function movePlayers() {
+        board.players().forEach(function (p) {
+            circle(tabSquare[p.position()].square.x + 20, tabSquare[p.position()].square.y +50, 5);
+        });
+        stage.update();
+    }
+
+    /*//--------------Dice-----------------
+let img = new Image();
+img.src = "img/dice-1-th.png";
+let img2 = new Image();
+img2.src = "img/dice-1-th.png";
+
+function drawImage(posx,posy, event) {
+    let image = event.target;
+    let bitmap = new createjs.Bitmap(image);
+    bitmap.x = posx;
+    bitmap.y = posy;
+    bitmap.addEventListener("click", onClick);
+    stage.addChild(bitmap);
+    stage.update();
+}
+
+img.onload = function (event) {drawImage(0,0, event);};
+img2.onload = function (event) {drawImage(100,0, event);};
+
+function onClick() {
+    let rand = Math.floor((Math.random() * 6) + 1);
+    let rand2 = Math.floor((Math.random() * 6) + 1);
+    img.src = "img/dice-" + rand + "-th.png";
+    img2.src = "img/dice-" + rand2 + "-th.png";
+}*/
 </script>
 </html>
