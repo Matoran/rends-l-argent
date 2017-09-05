@@ -166,6 +166,8 @@ function Board() {
         }else if(cell.isCommunityChest()){
             console.log("community chest");
             endTurn = true;
+        } else {
+            endTurn = true;
         }
         if(endTurn && double){
             endTurn = false;
