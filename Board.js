@@ -205,27 +205,27 @@ function Board() {
     return {
         squares: () => squares,
         actions: () => {
-            let actionsList = {};
+            let actionsList = [];
             if (midTurn) {
                 if (squares[players[activePlayer].position()].owner === bank) {
                     if (players[activePlayer].money() >= squares[players[activePlayer].position()].price()) {
-                        actionsList.buy = buy;
+                        actionsList.push(buy);
                     }
-                    actionsList.auction = auction;
+                    actionsList.push(auction);
                 } else {
-                    actionsList.pay = pay;
+                    actionsList.push(pay);
                 }
             } else if (endTurn) {
-                actionsList.end = end;
+                actionsList.push(end);
             } else if (players[activePlayer].isInJail()) {
                 if (players[activePlayer].hasCard()) {
-                    actionsList.useCard = useCard;
+                    actionsList.push(useCard);
                 } else if (players[activePlayer].money() > 50) {
-                    actionsList.payJail = payJail;
+                    actionsList.push(payJail);
                 }
-                actionsList.play = play;
+                actionsList.push(play);
             } else {
-                actionsList.play = play;
+                actionsList.push(play);
             }
             return actionsList;
         },
