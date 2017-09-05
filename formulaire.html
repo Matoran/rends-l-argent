@@ -135,11 +135,15 @@
     
     function circle(posx, posy, r, color) {
         let circle = new createjs.Shape();
-        circle.graphics.beginFill(color).drawCircle(0, 0, r);
+        let commandeCircle = circle.graphics.beginFill(color).command;
+        circle.graphics.drawCircle(0, 0, r);
         circle.x = posx;
         circle.y = posy;
         stage.addChild(circle);
-        return circle;
+        return {
+            circle : circle,
+            commandCircle : commandeCircle
+        };
     }
 
     function image(src, posx, posy){
@@ -166,7 +170,7 @@
 
     //draw background
     let background = new createjs.Shape();
-    background.graphics.beginFill("green").drawRect(0,0,700,700);
+    background.graphics.beginFill("grey").drawRect(0,0,700,700);
     stage.addChild(background);
 
 
@@ -212,15 +216,20 @@
         }else{
             if(directionX === 1 || directionX === -1){
                 tabSquare.push(square(strcutSquare(x, y, rectangleWidth, squareSize, color, i,directionX,directionY,cell)));
-                if(cell.isProperty()){
-                    if(directionX === 1){
+                if (cell.isBuyable()) {
+                    if (directionX === 1) {
                         color = cell.owner.color();
                         tabSquare[i].circle = circle(x + rectangleWidth/2, y + squareSize + 10, 5, color);
-                        color = cell.color();
-                        tabSquare[i].in = square(strcutSquare(x + 10, y + squareSize - 20, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
-                    }else{
+                    } else {
                         color = cell.owner.color();
                         tabSquare[i].circle = circle(x + rectangleWidth/2, y -10, 5, color);
+                    }
+                }
+                if(cell.isProperty()) {
+                    if (directionX === 1) {
+                        color = cell.color();
+                        tabSquare[i].in = square(strcutSquare(x + 10, y + squareSize - 20, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
+                    } else {
                         color = cell.color();
                         tabSquare[i].in = square(strcutSquare(x + 10, y + 10, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
                     }
@@ -239,15 +248,20 @@
 
             }else if(directionY === 1 || directionY === -1){
                 tabSquare.push(square(strcutSquare(x, y, squareSize, rectangleWidth,color,i,directionX,directionY,cell)));
-                if(cell.isProperty()) {
+                if (cell.isBuyable()) {
                     if (directionY === 1) {
                         color = cell.owner.color();
-                        tabSquare[i].circle = circle(x - 10, y + rectangleWidth / 2, 5);
+                        tabSquare[i].circle = circle(x - 10, y + rectangleWidth / 2, 5, color);
+                    } else {
+                        color = cell.owner.color();
+                        tabSquare[i].circle = circle(x + squareSize + 10, y + rectangleWidth / 2, 5, color);
+                    }
+                }
+                if(cell.isProperty()) {
+                    if (directionY === 1) {
                         color = cell.color();
                         tabSquare[i].in = square(strcutSquare(x + 10, y + 10, 10, rectangleWidth - 20,color,i,directionX,directionY,cell));
                     } else {
-                        color = cell.owner.color();
-                        tabSquare[i].circle = circle(x + squareSize + 10, y + rectangleWidth / 2, 5);
                         color = cell.color();
                         tabSquare[i].in = square(strcutSquare(x + squareSize - 20, y + 10, 10, rectangleWidth - 20,color,i,directionX,directionY,cell));
                     }
@@ -365,13 +379,51 @@
     });
     function movePlayers() {
         for(let i = 0; i < tabTokens.length; i++){
-           tabTokens[i].x =  tabSquare[board.players()[i].position()].square.x + 20 + (i*6);
-           tabTokens[i].y =  tabSquare[board.players()[i].position()].square.y + 20 + (i*6);
+           tabTokens[i].circle.x =  tabSquare[board.players()[i].position()].square.x + 20 + (i*6);
+           tabTokens[i].circle.y =  tabSquare[board.players()[i].position()].square.y + 20 + (i*6);
         }
         stage.update();
     }
 
-    //-------Play------------
+    //---------Play------------
+
+    let squares = [];
+    let labels = [];
+    play();
+    function play() {
+        squares.forEach(function (s) {
+            stage.removeChild(s);
+        });
+        labels.forEach(function (l) {
+            stage.removeChild(l);
+        })
+        squares = [];
+        let tabAction = board.actions();
+        for(let i = 0; i < tabAction.length; i++){
+            let square = new createjs.Shape();
+            square.graphics.beginFill("red").drawRect(0, 0, 50, 50);
+            square.x = 110 + (i*55);
+            square.y = 540;
+            square.on("click", function(){
+                tabAction[i]();
+                if(tabAction[i].name === "buy"){
+                    tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[board.activePlayer()].color();
+                }
+                movePlayers();
+                play();
+            });
+            let label = new createjs.Text("", "12px Arial", "#000000");
+            label.text = tabAction[i].name;
+            label.x = square.x;
+            label.y = square.y;
+            squares.push(square);
+            labels.push(label);
+            stage.addChild(square);
+            stage.addChild(label);
+            stage.update();
+        }
+    }
+
 
     /*//--------------Dice-----------------
 let img = new Image();
