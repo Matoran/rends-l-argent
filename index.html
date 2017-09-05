@@ -84,15 +84,20 @@
         }else{
             if(directionX === 1 || directionX === -1){
                 ctx.fillRect(x, y, rectangleWidth, squareSize);
+                if (cell.isBuyable()) {
+                    if (directionX === 1) {
+                        ctx.fillStyle = cell.owner.color();
+                        drawCircle(ctx, x + rectangleWidth / 2, y + squareSize + 10, 5);
+                    } else {
+                        ctx.fillStyle = cell.owner.color();
+                        drawCircle(ctx, x + rectangleWidth / 2, y - 10, 5);
+                    }
+                }
                 if(cell.isProperty()){
                     if(directionX === 1){
-                        ctx.fillStyle = cell.owner.color();
-                        drawCircle(ctx, x + rectangleWidth/2, y + squareSize + 10, 5);
                         ctx.fillStyle = cell.color();
                         ctx.fillRect(x + 10, y + squareSize - 20, rectangleWidth - 20, 10);
                     }else{
-                        ctx.fillStyle = cell.owner.color();
-                        drawCircle(ctx, x + rectangleWidth/2, y -10, 5);
                         ctx.fillStyle = cell.color();
                         ctx.fillRect(x + 10, y + 10, rectangleWidth - 20, 10);
                     }
@@ -111,15 +116,20 @@
 
             }else if(directionY === 1 || directionY === -1){
                 ctx.fillRect(x, y, squareSize, rectangleWidth);
-                if(cell.isProperty()) {
+                if (cell.isBuyable()) {
                     if (directionY === 1) {
                         ctx.fillStyle = cell.owner.color();
                         drawCircle(ctx, x - 10, y + rectangleWidth / 2, 5);
-                        ctx.fillStyle = cell.color();
-                        ctx.fillRect(x + 10, y + 10, 10, rectangleWidth - 20);
                     } else {
                         ctx.fillStyle = cell.owner.color();
                         drawCircle(ctx, x + squareSize + 10, y + rectangleWidth / 2, 5);
+                    }
+                }
+                if(cell.isProperty()) {
+                    if (directionY === 1) {
+                        ctx.fillStyle = cell.color();
+                        ctx.fillRect(x + 10, y + 10, 10, rectangleWidth - 20);
+                    } else {
                         ctx.fillStyle = cell.color();
                         ctx.fillRect(x + squareSize - 20, y + 10, 10, rectangleWidth - 20);
                     }
