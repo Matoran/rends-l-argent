@@ -96,7 +96,7 @@ function Board() {
         return square;
     }
 
-    let players = [Player("red"), Player("blue"), Player("yellow"), Player("black")];
+    let players = [Player("red"), Player("blue"), Player("green"), Player("black")];
     let squares = [Square("Départ"), Property("Rue des pommes", 60, "red"),
         Property("Rue des figues", 60, "red"), Station("Gare de Cornavin", 200),
         CommunityChest(), Tax("Impôts", 200),
@@ -231,6 +231,7 @@ function Board() {
             }
             return actionsList;
         },
-        players: () => players
+        players: () => players,
+        activePlayer: () => activePlayer
     }
 }
