@@ -133,9 +133,9 @@
         };
     }
     
-    function circle(posx, posy, r) {
+    function circle(posx, posy, r, color) {
         let circle = new createjs.Shape();
-        circle.graphics.beginFill("red").drawCircle(0, 0, r);
+        circle.graphics.beginFill(color).drawCircle(0, 0, r);
         circle.x = posx;
         circle.y = posy;
         stage.addChild(circle);
@@ -215,12 +215,12 @@
                 if(cell.isProperty()){
                     if(directionX === 1){
                         color = cell.owner.color();
-                        tabSquare[i].circle = circle(x + rectangleWidth/2, y + squareSize + 10, 5);
+                        tabSquare[i].circle = circle(x + rectangleWidth/2, y + squareSize + 10, 5, color);
                         color = cell.color();
                         tabSquare[i].in = square(strcutSquare(x + 10, y + squareSize - 20, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
                     }else{
                         color = cell.owner.color();
-                        tabSquare[i].circle = circle(x + rectangleWidth/2, y -10, 5);
+                        tabSquare[i].circle = circle(x + rectangleWidth/2, y -10, 5, color);
                         color = cell.color();
                         tabSquare[i].in = square(strcutSquare(x + 10, y + 10, rectangleWidth - 20, 10,color,i,directionX,directionY,cell));
                     }
@@ -359,12 +359,19 @@
     }
 
     //----------Move Player--------
+    let tabTokens = [];
+    board.players().forEach(function (p) {
+        tabTokens.push(circle(tabSquare[p.position()].square.x + 20, tabSquare[p.position()].square.y +20, 5,p.color()));
+    });
     function movePlayers() {
-        board.players().forEach(function (p) {
-            circle(tabSquare[p.position()].square.x + 20, tabSquare[p.position()].square.y +50, 5);
-        });
+        for(let i = 0; i < tabTokens.length; i++){
+           tabTokens[i].x =  tabSquare[board.players()[i].position()].square.x + 20 + (i*6);
+           tabTokens[i].y =  tabSquare[board.players()[i].position()].square.y + 20 + (i*6);
+        }
         stage.update();
     }
+
+    //-------Play------------
 
     /*//--------------Dice-----------------
 let img = new Image();
