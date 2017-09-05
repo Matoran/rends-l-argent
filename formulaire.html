@@ -170,7 +170,7 @@
 
     //draw background
     let background = new createjs.Shape();
-    background.graphics.beginFill("grey").drawRect(0,0,700,700);
+    background.graphics.beginFill("#79BD9A").drawRect(0, 0, 700, 700);
     stage.addChild(background);
 
 
@@ -186,9 +186,9 @@
     for(let i = 0; i < 40; i++){
         let cell = board.squares()[i];
         if(i % 2 === 0){
-            color = "yellow";
+            color = "#3B8686";
         }else{
-            color = "tomato";
+            color = "#0B486B";
         }
 
         if(i % 10 === 0){
@@ -401,7 +401,7 @@
         let tabAction = board.actions();
         for(let i = 0; i < tabAction.length; i++){
             let square = new createjs.Shape();
-            square.graphics.beginFill("red").drawRect(0, 0, 50, 50);
+            square.graphics.beginFill("#0B486B").drawRect(0, 0, 50, 50);
             square.x = 110 + (i*55);
             square.y = 540;
             square.on("click", function(){
