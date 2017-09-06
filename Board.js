@@ -9,7 +9,7 @@ function Board() {
             isChance: () => false,
             isCommunityChest: () => false,
             isTax: () => false
-        }
+        };
     }
 
     function Player(color) {
@@ -17,27 +17,49 @@ function Board() {
         let position = 0;
         let jail = 0;
         let cards = 0;
+        let properties = [];
         return {
-            receive: x => money += x,
-            pay: x => money -= x,
+            receive(x) {
+                money += x;
+            },
+            pay(x) {
+                money -= x;
+            },
             position: () => position,
-            forward: (nb) => position += nb,
+            forward(nb) {
+                position += nb;
+            },
             color: () => color,
             isInJail: () => jail > 0,
-            goJail: () => jail = 3,
-            jailTurn: () => jail -= 1,
-            goOutJail: () => jail = 0,
+            goJail() {
+                jail = 3;
+            },
+            jailTurn() {
+                jail -= 1;
+            },
+            goOutJail() {
+                jail = 0;
+            },
             money: () => money,
-            receiveCard: () => cards += 1,
+            receiveCard() {
+                cards += 1;
+            },
             hasCard: () => cards > 0,
-            useCard: () => cards -= 1,
-        }
+            useCard() {
+                cards -= 1;
+            },
+            addProperty: (id) => properties.push(id),
+            removeProperty(id) {
+                properties = properties.filter((element) => element !== id);
+            },
+            properties: () => properties
+        };
     }
 
     function Bank() {
         return {
             color: () => "yellow"
-        }
+        };
     }
 
     let bank = Bank();
@@ -52,9 +74,7 @@ function Board() {
         let square = Square(name);
         square.price = () => price;
         square.owner = bank;
-        square.isBuyable = function () {
-            return true
-        };
+        square.isBuyable = () => true;
         return square;
     }
 
@@ -138,8 +158,8 @@ function Board() {
     }
 
     function play() {
-        let dice1 = Math.floor(Math.random() * 6) + 1;
-        let dice2 = Math.floor(Math.random() * 6) + 1;
+        let dice1 = 3;//Math.floor(Math.random() * 6) + 1;
+        let dice2 = 5;//Math.floor(Math.random() * 6) + 1;
         double = dice1 === dice2;
         if (!players[activePlayer].isInJail() || double) {
             players[activePlayer].goOutJail();
@@ -154,22 +174,22 @@ function Board() {
             }
         }
         let cell = squares[players[activePlayer].position()];
-        if(cell.isTax()){
+        if (cell.isTax()) {
             players[activePlayer].pay(cell.price());
-            console.log("Joueur " + (activePlayer+1) + " a payé " + cell.price() + " d'impôts");
+            console.log("Joueur " + (activePlayer + 1) + " a payé " + cell.price() + " d'impôts");
             endTurn = true;
-        }else if(cell.isBuyable()){
+        } else if (cell.isBuyable()) {
             midTurn = true;
-        }else if(cell.isChance()){
+        } else if (cell.isChance()) {
             console.log("chance");
             endTurn = true;
-        }else if(cell.isCommunityChest()){
+        } else if (cell.isCommunityChest()) {
             console.log("community chest");
             endTurn = true;
         } else {
             endTurn = true;
         }
-        if(endTurn && double){
+        if (endTurn && double) {
             endTurn = false;
         }
     }
@@ -182,9 +202,10 @@ function Board() {
 
     function buy() {
         let position = players[activePlayer].position();
-        console.log("player " + (activePlayer+1) + " bought case " + squares[position].name());
+        console.log("player " + (activePlayer + 1) + " bought case " + squares[position].name());
         players[activePlayer].pay(squares[position].price());
         squares[position].owner = players[activePlayer];
+        players[activePlayer].addProperty(position);
         midTurn = false;
         endTurn = !double;
     }
@@ -196,7 +217,11 @@ function Board() {
     }
 
     function pay() {
-        console.log("pay");
+        let position = players[activePlayer].position();
+        let price = squares[position].price();
+        players[activePlayer].pay(price);
+        squares[position].owner.receive(price);
+        console.log(players[activePlayer].color() + " pay " + price + " to " + squares[position].owner.color());
     }
 
     function useCard() {
@@ -214,7 +239,7 @@ function Board() {
                         actionsList.push(buy);
                     }
                     actionsList.push(auction);
-                } else {
+                } else if (players[activePlayer].money() >= squares[players[activePlayer].position()].rent()) {
                     actionsList.push(pay);
                 }
             } else if (endTurn) {
@@ -233,5 +258,5 @@ function Board() {
         },
         players: () => players,
         activePlayer: () => activePlayer
-    }
+    };
 }
