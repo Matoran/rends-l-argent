@@ -118,10 +118,13 @@
         square.x = squareParam.posx;
         square.y = squareParam.posy;
         commandSquare.style = squareParam.color;
-        square.on("click", function(){
-            squareOnClick(squareParam.id);
-        });
+        if(squareParam.id !== 0 && squareParam.id !== 10 && squareParam.id !== 20 && squareParam.id !== 30) {
+            square.on("click", function () {
+                squareOnClick(squareParam.id);
+            });
+        }
         let label = new createjs.Text("", "12px Arial", "#000000");
+        stage.addChild(square);
         return{
             square : square,
             commandeSquare: commandSquare,
@@ -157,6 +160,7 @@
             stage.addChild(bitmap);
             stage.update();
         };
+        return img;
     }
 
     function text(txt, posx, posy, id){
@@ -281,11 +285,7 @@
     }
 
     tabSquare.forEach(function (s) {
-        stage.addChild(s.square);
         stage.addChild(s.label);
-        if(s.in !== undefined){
-            stage.addChild(s.in.square);
-        }
     });
     stage.update();
 
@@ -342,32 +342,78 @@
     function send() {
         let id = document.getElementById("id").value;
         let value = card.options[card.selectedIndex].value;
-        let text = value;
-        if(value == "Propriete"){
-            let name = document.getElementById("name").value;
-            let color = document.getElementById("color").value;
-            let price = document.getElementById("price").value;
-            tabSquare[id].commandeSquare.style = color;
-            text += "\n" + name + "\n" + color + "\n" + price;
-        }else if(value == "Gare"){
-            let name = document.getElementById("name").value;
-            text +=  "\n" + name;
-        }else if(value == "Services publiques"){
-            let service = document.getElementById("service");
-            service = service.options[service.selectedIndex].value;
-            text += "\n" + service;
-        }else if(value == "Impots et taxe") {
-            let taxe = document.getElementById("taxe");
-            taxe = taxe.options[taxe.selectedIndex].value;
-            text +=  "\n" + taxe;
-        }
-        //console.log(document.getElementById("id").value);
-        tabSquare[id].label.text = text;
-        tabSquare[id].label.x = tabSquare[id].square.x;
-        tabSquare[id].label.y = tabSquare[id].square.y;
-        tabSquare[id].label.alpha = 0.5;
+        let name = document.getElementById("name").value;
+        let color = document.getElementById("color").value;
+        let price = document.getElementById("price").value;
+        let service = document.getElementById("service");
+        service = service.options[service.selectedIndex].value;
+        let taxe = document.getElementById("taxe");
+        taxe = taxe.options[taxe.selectedIndex].value;
 
-        stage.addChild( tabSquare[id].label);
+        if(tabSquare[id].in !== undefined){
+            stage.removeChild(tabSquare[id].in.square);
+        }
+
+        if(tabSquare[id].circle !== undefined){
+            stage.removeChild(tabSquare[id].circle.circle);
+            tabSquare[id].circle = undefined;
+        }
+
+        if(tabSquare[id].img !== undefined){
+            stage.removeChild(tabSquare[id].img.src = "");
+        }
+
+
+        let x = tabSquare[id].struct.posx;
+        let y = tabSquare[id].struct.posy;
+        let dx = tabSquare[id].struct.directionX;
+        let dy = tabSquare[id].struct.directionY;
+        let cell = tabSquare[id].struct.cell;
+        if(dx === 1 || dx === -1){
+            if(value == "Propriete" || value == "Gare") {
+                if (dx === 1) {
+                    tabSquare[id].circle = circle(x + rectangleWidth/2, y + squareSize + 10, 5, "yellow");
+                } else {
+                    tabSquare[id].circle = circle(x + rectangleWidth/2, y -10, 5, "yellow");
+                }
+            }
+            if(value === "Propriete") {
+                if (dx === 1) {
+                    tabSquare[id].in = square(strcutSquare(x + 10, y + squareSize - 20, rectangleWidth - 20, 10,color,id,dx,dy,cell));
+                } else {
+                    tabSquare[id].in = square(strcutSquare(x + 10, y + 10, rectangleWidth - 20, 10,color,id,dx,dy,cell));
+                }
+            }
+        }else if(dy === 1 || dy === -1){
+            if(value == "Propriete" || value == "Gare") {
+                if (dy === 1) {
+                    tabSquare[id].circle = circle(x - 10, y + rectangleWidth / 2, 5, "yellow");
+                } else {
+                    tabSquare[id].circle = circle(x + squareSize + 10, y + rectangleWidth / 2, 5, "yellow");
+                }
+            }
+            if(value === "Propriete") {
+                if (dy === 1) {
+                    tabSquare[id].in = square(strcutSquare(x + 10, y + 10, 10, rectangleWidth - 20,color,id,dx,dy,cell));
+                } else {
+                    tabSquare[id].in = square(strcutSquare(x + squareSize - 20, y + 10, 10, rectangleWidth - 20,color,id,dx,dy,cell));
+                }
+            }
+        }
+
+        if(value === "Gare"){
+            tabSquare[id].img = image("img/train.png", x, y);
+        }else if(value === "Impots et taxe"){
+            tabSquare[id].img = image("img/tax.png", x, y);
+        }else if(value === "Caisse de communaute"){
+            tabSquare[id].img = image("img/chest.png", x, y);
+        }else if(value === "Chance"){
+            tabSquare[id].img = image("img/chance.png", x, y);
+        }/*else if(value === "Services publiques"){
+
+        }*/
+
+
         stage.update();
         cleanForm();
     }
@@ -375,18 +421,18 @@
     //----------Move Player--------
     let tabTokens = [];
     board.players().forEach(function (p) {
-        tabTokens.push(circle(tabSquare[p.position()].square.x + 20, tabSquare[p.position()].square.y +20, 5,p.color()));
+        tabTokens.push(circle(tabSquare[p.position()].square.x + 30, tabSquare[p.position()].square.y +20, 5,p.color()));
     });
     function movePlayers() {
         for(let i = 0; i < tabTokens.length; i++){
-           tabTokens[i].circle.x =  tabSquare[board.players()[i].position()].square.x + 20 + (i*6);
+           tabTokens[i].circle.x =  tabSquare[board.players()[i].position()].square.x + 30 + (i*6);
            tabTokens[i].circle.y =  tabSquare[board.players()[i].position()].square.y + 20 + (i*6);
         }
         stage.update();
     }
 
-    //---------Play------------
-
+    //-------------Play--------------
+    movePlayers();
     let squares = [];
     let labels = [];
     play();
