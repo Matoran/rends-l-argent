@@ -28,6 +28,10 @@ function Board() {
             position: () => position,
             forward(nb) {
                 position += nb;
+                if (position >= 40) {
+                    position %= 40;
+                    money += 200;
+                }
             },
             color: () => color,
             isInJail: () => jail > 0,
@@ -94,6 +98,7 @@ function Board() {
         square.buyHouse = () => houses += 1;
         square.hotel = () => hotel;
         square.buyHotel = () => hotel = 1;
+        square.rent = () => price * (hotel + houses);
         return square;
     }
 
@@ -158,8 +163,8 @@ function Board() {
     }
 
     function play() {
-        let dice1 = 3;//Math.floor(Math.random() * 6) + 1;
-        let dice2 = 5;//Math.floor(Math.random() * 6) + 1;
+        let dice1 = Math.floor(Math.random() * 6) + 1;
+        let dice2 = Math.floor(Math.random() * 6) + 1;
         double = dice1 === dice2;
         if (!players[activePlayer].isInJail() || double) {
             players[activePlayer].goOutJail();
@@ -222,6 +227,8 @@ function Board() {
         players[activePlayer].pay(price);
         squares[position].owner.receive(price);
         console.log(players[activePlayer].color() + " pay " + price + " to " + squares[position].owner.color());
+        midTurn = false;
+        endTurn = !double;
     }
 
     function useCard() {
