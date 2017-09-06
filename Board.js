@@ -76,6 +76,7 @@ function Board() {
         if (endTurn && double) {
             endTurn = false;
         }
+        return {dice1,dice2};
     }
 
     function payJail() {
