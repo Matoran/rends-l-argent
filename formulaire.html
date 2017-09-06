@@ -45,9 +45,6 @@
                             <option value="Caisse de communaute">Caisse de communauté</option>
                             <option value="Services publiques">Services publiques</option>
                             <option value="Impots et taxe">Impôts et taxe</option>
-                            <option value="Prison">Prison</option>
-                            <option value="Aller en prison">Aller en prison</option>
-                            <option value="Parking gratuit">Parking gratuit</option>
                         </select>
                     </div>
                     <div class="form-group" id="blocService">
@@ -88,7 +85,7 @@
                     <input type="hidden" id="id" value="">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="send()">Buy</button>
+                    <button type="button" class="btn btn-primary" onclick="send()" data-dismiss="modal">Buy</button>
                 </div>
             </div>
         </div>
@@ -113,6 +110,7 @@
     let stage = new createjs.Stage("canvas");
 
     function squareOnClick(identifiant) {
+        cleanForm();
         let type = document.getElementById("blocType");
         let name = document.getElementById("blocName");
         let price = document.getElementById("blocPrice");
@@ -344,10 +342,12 @@
             color.style.display = "block";
         } else if (value == "Gare") {
             name.style.display = "block";
+            price.style.display = "block";
         } else if (value == "Services publiques") {
             service.style.display = "block";
         } else if (value == "Impots et taxe") {
             taxe.style.display = "block";
+            price.style.display = "block";
         }
     });
 
@@ -356,7 +356,6 @@
         let name = document.getElementById("blocName");
         let price = document.getElementById("blocPrice");
         let color = document.getElementById("blocColor");
-        let button = document.getElementById("button");
         let id = document.getElementById("id");
         let service = document.getElementById("blocService");
         let taxe = document.getElementById("blocTaxe");
@@ -365,7 +364,6 @@
         name.style.display = "none";
         price.style.display = "none";
         color.style.display = "none";
-        button.style.display = "none";
         service.style.display = "none";
         taxe.style.display = "none";
     }
@@ -432,14 +430,20 @@
             }
         }
 
-        if (value === "Gare") {
+        if(value === "Gare"){
             tabSquare[id].img = image("img/train.png", x, y);
-        } else if (value === "Impots et taxe") {
+            board.squares()[id] = Station(name,price);
+        }else if(value === "Impots et taxe"){
             tabSquare[id].img = image("img/tax.png", x, y);
-        } else if (value === "Caisse de communaute") {
+            board.squares()[id] = Tax(name,price);
+        }else if(value === "Caisse de communaute"){
             tabSquare[id].img = image("img/chest.png", x, y);
-        } else if (value === "Chance") {
+            board.squares()[id] = CommunityChest();
+        }else if(value === "Chance"){
             tabSquare[id].img = image("img/chance.png", x, y);
+            board.squares()[id] = Chance();
+        }else if(value === "Propriete"){
+            board.squares()[id] = Property(name,price,color);
         }
         /*else if(value === "Services publiques"){
 
