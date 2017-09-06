@@ -11,5 +11,13 @@ function Property(name, price, color) {
     square.hotel = () => hotel;
     square.buyHotel = () => hotel = 1;
     square.rent = () => price * (hotel + houses);
+    square.toJSON = () => {
+        return {
+            type: "property",
+            name,
+            price,
+            color
+        };
+    };
     return square;
 }

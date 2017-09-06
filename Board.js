@@ -143,6 +143,29 @@ function Board() {
             return actionsList;
         },
         players: () => players,
-        activePlayer: () => activePlayer
+        activePlayer: () => activePlayer,
+        toJSON: () => JSON.stringify(squares),
+        fromJSON(json) {
+            squares = [];
+            let test = JSON.parse(json);
+            test.forEach(function (cell) {
+                if (cell.type === "square") {
+                    squares.push(Square(cell.name));
+                } else if (cell.type === "property") {
+                    squares.push(Property(cell.name, cell.price, cell.color));
+                } else if (cell.type === "station") {
+                    squares.push(Station(cell.name, cell.price));
+                } else if (cell.type === "chance") {
+                    squares.push(Chance());
+                } else if (cell.type === "communitychest") {
+                    squares.push(CommunityChest());
+                } else if (cell.type === "tax") {
+                    squares.push(Tax(cell.name, cell.price));
+                }
+                console.log(squares);
+                console.log("test");
+            });
+
+        }
     };
 }
