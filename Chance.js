@@ -1,7 +1,7 @@
 "use strict";
 
-function Square(name) {
+function Chance() {
     let cell = Cell();
-    cell.name = () => name;
+    cell.isChance = () => true;
     return cell;
 }

@@ -1,9 +1,8 @@
 "use strict";
 
-function Buyable(name, price) {
+function Tax(name, price) {
     let square = Square(name);
     square.price = () => price;
-    square.owner = bank;
-    square.isBuyable = () => true;
+    square.isTax = () => true;
     return square;
 }
