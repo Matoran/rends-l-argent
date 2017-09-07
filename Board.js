@@ -39,7 +39,7 @@ function Board() {
 
     let communityChestCards = [
         Card("Payez votre assurance maladie 500$", (player) => player.pay(500)),
-        Card("Votre employeur a doublé votre salaire ce mois, recevez 2000$", (player) => player.receive(2000)),
+        Card("Votre employeur a doublé votre salaire ce mois, recevez 2000$", (player) => player.pay(2000)),
         Card("Accident de moto payez les réparations 300$", (player) => player.pay(300)),
         Card("Vous gagnez un prix dans un jeu à gratter, recevez 800$", (player) => player.receive(800))
     ];
@@ -51,7 +51,6 @@ function Board() {
 
     function jail() {
         players[activePlayer].goJail();
-        players[activePlayer].position()
         console.log("jail");
     }
 
@@ -63,10 +62,15 @@ function Board() {
         console.log("end, active player = " + (activePlayer + 1));
     }
 
+    function random(max) {
+        return Math.floor(Math.random() * max);
+    }
+
     function play() {
-        let dice1 = Math.floor(Math.random() * 6) + 1;
-        let dice2 = Math.floor(Math.random() * 6) + 1;
+        let dice1 = 2;//
+        let dice2 = 2;//Math.floor(Math.random() * 6) + 1;
         double = dice1 === dice2;
+        console.log(!players[activePlayer].isInJail() || double);
         if (!players[activePlayer].isInJail() || double) {
             players[activePlayer].goOutJail();
             players[activePlayer].forward(dice1 + dice2);
@@ -83,25 +87,25 @@ function Board() {
         if (cell.isTax()) {
             players[activePlayer].pay(cell.price());
             console.log("Joueur " + (activePlayer + 1) + " a payé " + cell.price() + " d'impôts");
-            endTurn = true;
+            endTurn = !double;
         } else if (cell.isBuyable() && cell.owner !== players[activePlayer]) {
             midTurn = true;
         } else if (cell.isChance()) {
             console.log("chance");
-            endTurn = true;
+            endTurn = !double;
         } else if (cell.isCommunityChest()) {
             console.log("community chest");
-            endTurn = true;
-        } else {
-            endTurn = true;
-        }
-        if (endTurn && double) {
-            endTurn = false;
-        }
-        if (cell.name === "Aller en prison") {
-            endTurn = true;
+            let rand = random(communityChestCards.length);
+            console.log(communityChestCards[rand].text());
+            communityChestCards[rand].action(players[activePlayer]);
+            endTurn = !double;
+        } else if (cell.isGoToJail()) {
             jail();
+            end();
+        } else {
+            endTurn = !double;
         }
+
         return {dice1, dice2};
     }
 
@@ -141,32 +145,48 @@ function Board() {
         console.log("use card  to go out of jail");
     }
 
+    function surrender() {
+        console.log("surrender");
+        players.splice(activePlayer, 1);
+    }
+
+    function trade() {
+        console.log("trade");
+    }
+
 
     return {
         squares: () => squares,
         actions: () => {
             let actionsList = [];
-            if (midTurn) {
-                if (squares[players[activePlayer].position()].owner === bank) {
-                    if (players[activePlayer].money() >= squares[players[activePlayer].position()].price()) {
-                        actionsList.push(buy);
-                    }
-                    actionsList.push(auction);
-                } else if (players[activePlayer].money() >= squares[players[activePlayer].position()].rent()) {
-                    actionsList.push(pay);
-                }
-            } else if (endTurn) {
-                actionsList.push(end);
-            } else if (players[activePlayer].isInJail()) {
-                if (players[activePlayer].hasCard()) {
-                    actionsList.push(useCard);
-                } else if (players[activePlayer].money() > 50) {
-                    actionsList.push(payJail);
-                }
-                actionsList.push(play);
+            if (players[activePlayer].money() < 0) {
+                actionsList.push(surrender);
+                actionsList.push(trade);
+
             } else {
-                actionsList.push(play);
+                if (midTurn) {
+                    if (squares[players[activePlayer].position()].owner === bank) {
+                        if (players[activePlayer].money() >= squares[players[activePlayer].position()].price()) {
+                            actionsList.push(buy);
+                        }
+                        actionsList.push(auction);
+                    } else if (players[activePlayer].money() >= squares[players[activePlayer].position()].rent()) {
+                        actionsList.push(pay);
+                    }
+                } else if (endTurn) {
+                    actionsList.push(end);
+                } else if (players[activePlayer].isInJail()) {
+                    if (players[activePlayer].hasCard()) {
+                        actionsList.push(useCard);
+                    } else if (players[activePlayer].money() > 50) {
+                        actionsList.push(payJail);
+                    }
+                    actionsList.push(play);
+                } else {
+                    actionsList.push(play);
+                }
             }
+
             return actionsList;
         },
         players: () => players,

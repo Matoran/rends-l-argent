@@ -7,6 +7,7 @@ function Cell() {
         isTrain: () => false,
         isChance: () => false,
         isCommunityChest: () => false,
-        isTax: () => false
+        isTax: () => false,
+        isGoToJail: () => false
     };
 }
