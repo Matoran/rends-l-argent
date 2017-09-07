@@ -28,6 +28,7 @@
 </head>
 <body>
 <canvas id="canvas" width="700" height="700"></canvas>
+<!-- Modal configuration -->
 <div class="modal fade" id="configuration" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-dialog" role="document">
@@ -91,6 +92,38 @@
         </div>
     </div>
 </div>
+
+<!-- Modal auction -->
+<div class="modal fade" id="auction" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Auction</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="buyer">Buyer</label>
+                        <select class="form-control" id="buyer">
+                            <option value="0">Player 1</option>
+                            <option value="1">Player 2</option>
+                            <option value="2">Player 3</option>
+                            <option value="3">Player 4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priceAuction">Price</label>
+                        <input type="number" id="priceAuction" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="finishAuction()" data-dismiss="modal">Buy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script src="easeljs-0.8.2.min.js"></script>
 <script src="Bank.js"></script>
@@ -103,6 +136,7 @@
 <script src="Station.js"></script>
 <script src="Property.js"></script>
 <script src="Player.js"></script>
+<script src="Card.js"></script>
 <script src="Board.js"></script>
 <script>
     //----------------draw board-----------------------
@@ -519,6 +553,9 @@
                 if (tabAction[i].name === "buy") {
                     tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[board.activePlayer()].color();
                 }
+                if (tabAction[i].name === "auction") {
+                    $('#auction').modal();
+                }
                 movePlayers();
                 play();
             });
@@ -532,6 +569,13 @@
             stage.addChild(label);
             stage.update();
         }
+    }
+
+    function finishAuction() {
+        let buyer = $('#buyer').val();
+        board.finishAuction(buyer, $('#priceAuction').val());
+        tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[buyer].color();
+        stage.update();
     }
 
 

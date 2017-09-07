@@ -25,6 +25,7 @@ function Player(color) {
         isInJail: () => jail > 0,
         goJail() {
             jail = 3;
+            position = 10;
         },
         jailTurn() {
             jail -= 1;

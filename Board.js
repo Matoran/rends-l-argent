@@ -22,6 +22,27 @@ function Board() {
         CommunityChest(), Tax("Impôts", 200),
         Station("Gare de Genève", 200), Chance()
     ];
+
+    function goToNearestStation() {
+    }
+
+    function goToNearestUtility() {
+
+    }
+
+    let chanceCards = [
+        Card("Avancez de 3 cases", (player) => player.forward(3)),
+        Card("Reculez de 3 cases", (player) => player.forward(-3)),
+        Card("Allez à la gare la plus proche", goToNearestStation()),
+        Card("Allez à l'entreprise publique la plus proche", goToNearestUtility()),
+    ];
+
+    let communityChestCards = [
+        Card("Payez votre assurance maladie 500$", (player) => player.pay(500)),
+        Card("Votre employeur a doublé votre salaire ce mois, recevez 2000$", (player) => player.receive(2000)),
+        Card("Accident de moto payez les réparations 300$", (player) => player.pay(300)),
+        Card("Vous gagnez un prix dans un jeu à gratter, recevez 800$", (player) => player.receive(800))
+    ];
     let activePlayer = 0;
     let endTurn = false;
     let midTurn = false;
@@ -30,6 +51,7 @@ function Board() {
 
     function jail() {
         players[activePlayer].goJail();
+        players[activePlayer].position()
         console.log("jail");
     }
 
@@ -62,7 +84,7 @@ function Board() {
             players[activePlayer].pay(cell.price());
             console.log("Joueur " + (activePlayer + 1) + " a payé " + cell.price() + " d'impôts");
             endTurn = true;
-        } else if (cell.isBuyable()) {
+        } else if (cell.isBuyable() && cell.owner !== players[activePlayer]) {
             midTurn = true;
         } else if (cell.isChance()) {
             console.log("chance");
@@ -76,7 +98,11 @@ function Board() {
         if (endTurn && double) {
             endTurn = false;
         }
-        return {dice1,dice2};
+        if (cell.name === "Aller en prison") {
+            endTurn = true;
+            jail();
+        }
+        return {dice1, dice2};
     }
 
     function payJail() {
@@ -98,7 +124,7 @@ function Board() {
     function auction() {
         console.log("auction");
         midTurn = false;
-        endTurn = true;
+        endTurn = !double;
     }
 
     function pay() {
@@ -167,6 +193,10 @@ function Board() {
                 console.log("test");
             });
 
+        },
+        finishAuction(buyer, price) {
+            squares[players[activePlayer].position()].owner = players[buyer];
+            players[buyer].pay(price);
         }
     };
 }

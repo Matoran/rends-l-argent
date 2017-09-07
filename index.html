@@ -20,6 +20,18 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
             integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
             crossorigin="anonymous"></script>
+    <script src="easeljs-0.8.2.min.js"></script>
+    <script src="Bank.js"></script>
+    <script src="Cell.js"></script>
+    <script src="Square.js"></script>
+    <script src="Tax.js"></script>
+    <script src="CommunityChest.js"></script>
+    <script src="Chance.js"></script>
+    <script src="Buyable.js"></script>
+    <script src="Station.js"></script>
+    <script src="Property.js"></script>
+    <script src="Player.js"></script>
+    <script src="Card.js"></script>
     <script src="Board.js"></script>
 </head>
 <body>
@@ -56,44 +68,22 @@
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills1" role="tabpanel"
                          aria-labelledby="pills-home-tab">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Player 1</th>
-                                <th>You</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <label>
-                                        <input type="checkbox"/>
-                                        Rue des pommes(300)
-                                    </label>
-                                </td>
-                                <td>
-                                    <label>
-                                        <input type="checkbox"/>
-                                        Rue des oranges(300)
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label>
-                                        <input type="checkbox"/>
-                                        Rue des oranges(300)
-                                    </label>
-                                </td>
-                                <td>
-                                    <label>
-                                        <input type="checkbox"/>
-                                        Rue des poires(300)
-                                    </label>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect2">Player 1</label>
+                            <select multiple class="form-control" id="exampleFormControlSelect2">
+                                <option>Route des pommes</option>
+                                <option>Route des poires</option>
+                                <option>Route des cerises</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect3">You</label>
+                            <select multiple class="form-control" id="exampleFormControlSelect3">
+                                <option>Gare de Cornavin</option>
+                                <option>Gare à toi</option>
+                                <option>Gare toi à gauche</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="pills2" role="tabpanel" aria-labelledby="pills-profile-tab">
                         ...
@@ -111,36 +101,7 @@
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#auction">
     Auction
 </button>
-<!-- Modal -->
-<div class="modal fade" id="auction" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Auction</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="buyer">Buyer</label>
-                        <select class="form-control" id="buyer">
-                            <option value="1">Player 1</option>
-                            <option value="2">Player 2</option>
-                            <option value="3">Player 3</option>
-                            <option value="4">Player 4</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="number" id="price" class="form-control"/>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Buy</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 </body>
 <script>
     let imgTrain = new Image();
