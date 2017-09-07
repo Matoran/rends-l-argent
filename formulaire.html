@@ -370,16 +370,16 @@
         service.style.display = "none";
         taxe.style.display = "none";
 
-        if (value == "Propriete") {
+        if (value === "Propriete") {
             name.style.display = "block";
             price.style.display = "block";
             color.style.display = "block";
-        } else if (value == "Gare") {
+        } else if (value === "Gare") {
             name.style.display = "block";
             price.style.display = "block";
-        } else if (value == "Services publiques") {
+        } else if (value === "Services publiques") {
             service.style.display = "block";
-        } else if (value == "Impots et taxe") {
+        } else if (value === "Impots et taxe") {
             taxe.style.display = "block";
             price.style.display = "block";
         }
@@ -433,7 +433,7 @@
         let dy = tabSquare[id].struct.directionY;
         let cell = tabSquare[id].struct.cell;
         if (dx === 1 || dx === -1) {
-            if (value == "Propriete" || value == "Gare") {
+            if (value === "Propriete" || value === "Gare") {
                 if (dx === 1) {
                     tabSquare[id].circle = circle(x + rectangleWidth / 2, y + squareSize + 10, 5, "yellow");
                 } else {
@@ -448,7 +448,7 @@
                 }
             }
         } else if (dy === 1 || dy === -1) {
-            if (value == "Propriete" || value == "Gare") {
+            if (value === "Propriete" || value === "Gare") {
                 if (dy === 1) {
                     tabSquare[id].circle = circle(x - 10, y + rectangleWidth / 2, 5, "yellow");
                 } else {
@@ -522,12 +522,20 @@
 
     img.onload = function (event) {drawImage(200,330, event);};
     img2.onload = function (event) {drawImage(300,330, event);};
+    let test;
     play();
+
     function play() {
-        namePlayer.text = "Au joueur numéro: " + (board.activePlayer()+1) + " de jouer!";
-        namePlayer.text += "\n\n Vous avez: " + board.players()[board.activePlayer()].money() + " monopoly"
-        namePlayer.color = board.players()[board.activePlayer()].color();
-        stage.addChild(namePlayer);
+        let tabAction = board.actions();
+        if (test) {
+            namePlayer.text = board.players()[board.activePlayer()].color() + " turn";
+            namePlayer.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " monopoly";
+            if (tabAction[0].name === "buy") {
+                namePlayer.text += "\n\nThe price is: " + board.squares()[board.players()[board.activePlayer()].position()].price() + " monopoly";
+            }
+            namePlayer.color = board.players()[board.activePlayer()].color();
+        }
+        test = true;
         squares.forEach(function (s) {
             stage.removeChild(s);
         });
@@ -535,30 +543,51 @@
             stage.removeChild(l);
         });
         squares = [];
-        let tabAction = board.actions();
         for (let i = 0; i < tabAction.length; i++) {
             let square = new createjs.Shape();
             square.graphics.beginFill("#0B486B").drawRect(0, 0, 80, 80);
             square.x = 210 + (i * 85);
             square.y = 440;
             square.on("click", function () {
-                let dice = tabAction[i]();
-                if(dice !== undefined){
-                    img.src = "img/dice-" + dice.dice1 + "-th.png";
-                    img2.src = "img/dice-" + dice.dice2 + "-th.png";
-                }else{
-                    img.src = "";
-                    img2.src = "";
+                if (tabAction[i].name === "surrender") {
+                    stage.removeChild(tabTokens[board.activePlayer()].circle);
+                    tabTokens.splice(board.activePlayer(), 1);
                 }
+                let ret = tabAction[i]();
+                if (ret !== undefined) {
+                    if (ret.hasOwnProperty("dice1")) {
+                        img.src = "img/dice-" + ret.dice1 + "-th.png";
+                        img2.src = "img/dice-" + ret.dice2 + "-th.png";
+                    } else {
+                        img.src = "";
+                        img2.src = "";
+                    }
+                    if (ret.text !== "") {
+                        namePlayer.text = board.players()[board.activePlayer()].color() + " turn";
+                        namePlayer.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " monopoly";
+                        namePlayer.text += "\n\n" + ret.text;
+                        test = false;
+                    }
+                }
+
                 if (tabAction[i].name === "buy") {
                     tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[board.activePlayer()].color();
                 }
                 if (tabAction[i].name === "auction") {
                     $('#auction').modal();
                 }
+
+                if (tabAction[i].name === "trade") {
+                    $('#trade').modal();
+                }
+
+
+
                 movePlayers();
                 play();
             });
+            stage.addChild(namePlayer);
+            stage.update();
             let label = new createjs.Text("", "15px Arial", "#000000");
             label.text = tabAction[i].name;
             label.x = square.x+20;
@@ -577,32 +606,5 @@
         tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[buyer].color();
         stage.update();
     }
-
-
-    /*//--------------Dice-----------------
-let img = new Image();
-img.src = "img/dice-1-th.png";
-let img2 = new Image();
-img2.src = "img/dice-1-th.png";
-
-function drawImage(posx,posy, event) {
-    let image = event.target;
-    let bitmap = new createjs.Bitmap(image);
-    bitmap.x = posx;
-    bitmap.y = posy;
-    bitmap.addEventListener("click", onClick);
-    stage.addChild(bitmap);
-    stage.update();
-}
-
-img.onload = function (event) {drawImage(0,0, event);};
-img2.onload = function (event) {drawImage(100,0, event);};
-
-function onClick() {
-    let rand = Math.floor((Math.random() * 6) + 1);
-    let rand2 = Math.floor((Math.random() * 6) + 1);
-    img.src = "img/dice-" + rand + "-th.png";
-    img2.src = "img/dice-" + rand2 + "-th.png";
-}*/
 </script>
 </html>

@@ -51,12 +51,17 @@ function Board() {
 
     function jail() {
         players[activePlayer].goJail();
+        players[activePlayer].position();
+        let text = "jail";
         console.log("jail");
+        return {
+            text: text
+        };
     }
 
     function end() {
         activePlayer += 1;
-        activePlayer %= 4;
+        activePlayer %= players.length;
         endTurn = false;
         same = 0;
         console.log("end, active player = " + (activePlayer + 1));
@@ -67,8 +72,8 @@ function Board() {
     }
 
     function play() {
-        let dice1 = 2;//
-        let dice2 = 2;//Math.floor(Math.random() * 6) + 1;
+        let dice1 = Math.floor(Math.random() * 6) + 1;
+        let dice2 = Math.floor(Math.random() * 6) + 1;
         double = dice1 === dice2;
         console.log(!players[activePlayer].isInJail() || double);
         if (!players[activePlayer].isInJail() || double) {
@@ -106,23 +111,35 @@ function Board() {
             endTurn = !double;
         }
 
-        return {dice1, dice2};
+        return {
+            text: "",
+            dice1: dice1,
+            dice2: dice2
+        };
     }
 
     function payJail() {
+        let text = "pay to go out of jail";
         console.log("pay to go out of jail");
         players[activePlayer].pay(50);
         players[activePlayer].goOutJail();
+        return {
+            text: text
+        };
     }
 
     function buy() {
         let position = players[activePlayer].position();
+        let text = "player " + (activePlayer + 1) + " bought case " + squares[position].name();
         console.log("player " + (activePlayer + 1) + " bought case " + squares[position].name());
         players[activePlayer].pay(squares[position].price());
         squares[position].owner = players[activePlayer];
         players[activePlayer].addProperty(position);
         midTurn = false;
         endTurn = !double;
+        return {
+            text: text
+        };
     }
 
     function auction() {
@@ -136,9 +153,13 @@ function Board() {
         let price = squares[position].price();
         players[activePlayer].pay(price);
         squares[position].owner.receive(price);
+        let text = players[activePlayer].color() + " pay " + price + " to " + squares[position].owner.color();
         console.log(players[activePlayer].color() + " pay " + price + " to " + squares[position].owner.color());
         midTurn = false;
         endTurn = !double;
+        return {
+            text: text
+        }
     }
 
     function useCard() {
@@ -147,11 +168,18 @@ function Board() {
 
     function surrender() {
         console.log("surrender");
+
         players.splice(activePlayer, 1);
+        activePlayer -= 1;
+        end();
     }
 
     function trade() {
         console.log("trade");
+    }
+
+    function win() {
+        console.log("win motherfucker");
     }
 
 
@@ -159,6 +187,10 @@ function Board() {
         squares: () => squares,
         actions: () => {
             let actionsList = [];
+            if (players.length === 1) {
+                actionsList.push(win);
+                return actionsList;
+            }
             if (players[activePlayer].money() < 0) {
                 actionsList.push(surrender);
                 actionsList.push(trade);
@@ -186,7 +218,7 @@ function Board() {
                     actionsList.push(play);
                 }
             }
-
+            actionsList.push(trade);
             return actionsList;
         },
         players: () => players,
