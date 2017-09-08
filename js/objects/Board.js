@@ -207,6 +207,8 @@ function Board() {
                         actionsList.push(auction);
                     } else if (players[activePlayer].money() >= squares[players[activePlayer].position()].rent()) {
                         actionsList.push(pay);
+                    } else {
+                        actionsList.push(surrender);
                     }
                 } else if (endTurn) {
                     actionsList.push(end);
@@ -252,6 +254,16 @@ function Board() {
         finishAuction(buyer, price) {
             squares[players[activePlayer].position()].owner = players[buyer];
             players[buyer].pay(price);
+        },
+        finishTrade(player1, player2) {
+            players[activePlayer].pay(player1.money);
+            players[activePlayer].receive(player2.money);
+            player1.properties.forEach(function (property) {
+                property.owner = player2.identity;
+            });
+            player2.properties.forEach(function (property) {
+                property.owner = players[activePlayer];
+            });
         }
     };
 }

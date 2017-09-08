@@ -138,10 +138,12 @@ function play() {
                                  aria-labelledby="pills-home-tab">
                                 <div class="form-group">
                                 <label for="select${i}">${player.color()}</label>
+                                <input type="hidden" value="${i}"/>
                                 <select multiple class="form-control" id="select${i}">
+                                
                             `;
                             player.properties().forEach(function (property) {
-                                text += `<option value="">${property.name()}</option>`;
+                                text += `<option value="${property.id()}">${property.name()}</option>`;
                             });
                             text += `</select></div><div class="form-group">
                             <label for="money${i}">Money</label>
@@ -183,6 +185,21 @@ function finishAuction() {
     board.finishAuction(buyer, $("#priceAuction").val());
     tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[buyer].color();
     stage.update();
+}
+
+function finishTrade() {
+    let player1 = {
+        properties: $("#selectActivePlayer").val(),
+        money: $("#moneyActivePlayer").val()
+    };
+    let player2 = {
+        identity: players[$('.show.active input[type="hidden"]').val()],
+        properties: $('.show.active select').val(),
+        money: $('.show.active input[type="number"]').val()
+    };
+    console.log(player1);
+    console.log(player2);
+    board.finishTrade(player1, player2);
 }
 
 function debug() {
