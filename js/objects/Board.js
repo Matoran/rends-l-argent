@@ -99,6 +99,10 @@ function Board() {
             midTurn = true;
         } else if (cell.isChance()) {
             console.log("chance");
+            let rand = random(chanceCards.length);
+            text = chanceCards[rand].text();
+            console.log(chanceCards[rand].text());
+            chanceCards[rand].action(players[activePlayer]);
             endTurn = !double;
         } else if (cell.isCommunityChest()) {
             console.log("community chest");
@@ -258,11 +262,13 @@ function Board() {
         finishTrade(player1, player2) {
             players[activePlayer].pay(player1.money);
             players[activePlayer].receive(player2.money);
+            player2.identity.pay(player2.money);
+            player2.identity.receive(player1.money);
             player1.properties.forEach(function (property) {
-                property.owner = player2.identity;
+                squares[property].owner = player2.identity;
             });
             player2.properties.forEach(function (property) {
-                property.owner = players[activePlayer];
+                squares[property].owner = players[activePlayer];
             });
         }
     };

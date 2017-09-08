@@ -154,7 +154,7 @@ function play() {
 
                         } else {
                             player.properties().forEach(function (property) {
-                                selectActivePlayer.append(`<option value="">${property.name()}</option>`);
+                                selectActivePlayer.append(`<option value="${property.id()}">${property.name()}</option>`);
                             });
                         }
                     });
@@ -197,6 +197,15 @@ function finishTrade() {
         properties: $('.show.active select').val(),
         money: $('.show.active input[type="number"]').val()
     };
+
+    player1.properties.forEach(function (property) {
+        console.log(property);
+        tabSquare[board.squares()[property].id()].circle.commandCircle.style = player2.identity.color();
+    });
+    player2.properties.forEach(function (property) {
+        tabSquare[board.squares()[property].id()].circle.commandCircle.style = players[board.activePlayer()].color();
+    });
+    stage.update();
     console.log(player1);
     console.log(player2);
     board.finishTrade(player1, player2);
