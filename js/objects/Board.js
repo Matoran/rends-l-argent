@@ -92,7 +92,7 @@ function Board() {
         let text = "";
         if (cell.isTax()) {
             players[activePlayer].pay(cell.price());
-            text = players[(activePlayer + 1)].color() + " pay " + cell.price() + " tax";
+            text = players[activePlayer].color() + " pay " + cell.price() + " tax";
             console.log("Joueur " + (activePlayer + 1) + " a payé " + cell.price() + " d'impôts");
             endTurn = !double;
         } else if (cell.isBuyable() && cell.owner !== players[activePlayer]) {
@@ -230,6 +230,7 @@ function Board() {
         toJSON: () => JSON.stringify(squares),
         fromJSON(json) {
             squares = [];
+            id = 0;
             let test = JSON.parse(json);
             test.forEach(function (cell) {
                 if (cell.type === "square") {

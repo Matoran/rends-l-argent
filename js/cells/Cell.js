@@ -2,6 +2,7 @@
 let id = 0;
 
 function Cell() {
+    let localId = id;
     id += 1;
     return {
         isBuyable: () => false,
@@ -11,6 +12,6 @@ function Cell() {
         isCommunityChest: () => false,
         isTax: () => false,
         isGoToJail: () => false,
-        id: () => id
+        id: () => localId
     };
 }

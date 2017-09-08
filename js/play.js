@@ -68,6 +68,19 @@ function play() {
         square.y = 440;
         square.on("click", function () {
             if (t.name === "surrender") {
+                let cell = board.squares()[players[board.activePlayer()].position()];
+                if (cell.isBuyable()) {
+                    players[board.activePlayer()].properties().forEach(function (property) {
+                        cell.owner.addProperty(property);
+                        property.owner = cell.owner;
+                        tabSquare[property.id()].circle.commandCircle.style = cell.owner.color();
+                    });
+                } else {
+                    board.players()[board.activePlayer()].properties().forEach(function (property) {
+                        tabSquare[property.id()].circle.commandCircle.style = "yellow";
+                        property.owner = bank;
+                    });
+                }
                 stage.removeChild(tabTokens[board.activePlayer()].circle);
                 tabTokens.splice(board.activePlayer(), 1);
             }
