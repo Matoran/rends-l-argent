@@ -18,9 +18,9 @@ function movePlayers() {
 movePlayers();
 let squares = [];
 let labels = [];
-let namePlayer = new createjs.Text("", "16px Arial", "#000000");
-namePlayer.x = 250;
-namePlayer.y = 120;
+let labelText = new createjs.Text("", "16px Arial", "#000000");
+labelText.x = 200;
+labelText.y = 120;
 let img = new Image();
 let img2 = new Image();
 
@@ -39,18 +39,18 @@ img.onload = function (event) {
 img2.onload = function (event) {
     drawImage(300, 330, event);
 };
-let test;
+let test = true;
 play();
 
 function play() {
     let tabAction = board.actions();
     if (test) {
-        namePlayer.text = board.players()[board.activePlayer()].color() + " turn";
-        namePlayer.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " monopoly";
+        labelText.text = board.players()[board.activePlayer()].color() + " turn";
+        labelText.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " $";
         if (tabAction[0].name === "buy") {
-            namePlayer.text += "\n\nThe price is: " + board.squares()[board.players()[board.activePlayer()].position()].price() + " monopoly";
+            labelText.text += "\n\nThe price is: " + board.squares()[board.players()[board.activePlayer()].position()].price() + " $";
         }
-        namePlayer.color = board.players()[board.activePlayer()].color();
+        labelText.color = board.players()[board.activePlayer()].color();
     }
     test = true;
     squares.forEach(function (s) {
@@ -81,9 +81,9 @@ function play() {
                     img2.src = "";
                 }
                 if (ret.text !== "") {
-                    namePlayer.text = board.players()[board.activePlayer()].color() + " turn";
-                    namePlayer.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " monopoly";
-                    namePlayer.text += "\n\n" + ret.text;
+                    labelText.text = board.players()[board.activePlayer()].color() + " turn";
+                    labelText.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " $";
+                    labelText.text += "\n\n" + ret.text;
                     test = false;
                 }
             }
@@ -92,7 +92,15 @@ function play() {
                 tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[board.activePlayer()].color();
             }
             if (t.name === "auction") {
-                $("#auction").modal();
+                let buyer = $("#buyer");
+                buyer.empty();
+                players.forEach(function (player, id) {
+                    buyer.append(`<option value="${id}">${player.color()}(${player.money()}$)</option>`);
+                });
+                $("#auction").modal({
+                    keyboard: false,
+                    backdrop: 'static'
+                });
             }
 
             if (t.name === "trade") {
@@ -103,7 +111,7 @@ function play() {
             movePlayers();
             play();
         });
-        stage.addChild(namePlayer);
+        stage.addChild(labelText);
         stage.update();
         let label = new createjs.Text("", "15px Arial", "#000000");
         label.text = t.name;

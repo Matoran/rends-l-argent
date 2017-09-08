@@ -14,7 +14,10 @@ function squareOnClick(identifiant) {
     color.style.display = "block";
     let card = document.getElementById("typeCarte");
     card.selectedIndex = "Propriete";
-    $("#configuration").modal();
+    $("#configuration").modal({
+        keyboard: false,
+        backdrop: 'static'
+    });
 }
 
 //----------Form--------------------
