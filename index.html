@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Rends l'argent</title>
-    <style>
-        canvas {
-            height: 700px;
-            width: 700px;
-        }
-    </style>
+
+    <!-- Bootstrap core CSS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
             crossorigin="anonymous"></script>
@@ -20,228 +17,35 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
             integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
             crossorigin="anonymous"></script>
-    <script src="js/libs/easeljs-0.8.2.min.js"></script>
-    <script src="js/objects/Bank.js"></script>
-    <script src="js/cells/Cell.js"></script>
-    <script src="js/cells/Square.js"></script>
-    <script src="js/cells/Tax.js"></script>
-    <script src="js/cells/CommunityChest.js"></script>
-    <script src="js/cells/Chance.js"></script>
-    <script src="js/cells/Buyable.js"></script>
-    <script src="js/cells/Station.js"></script>
-    <script src="js/cells/Property.js"></script>
-    <script src="js/objects/Player.js"></script>
-    <script src="js/objects/Card.js"></script>
-    <script src="js/objects/Board.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="css/cover.css" rel="stylesheet">
 </head>
+
 <body>
-<canvas id="canvas" width="700" height="700"></canvas>
 
+<div class="site-wrapper">
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Trade
-</button>
+    <div class="site-wrapper-inner">
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Trade</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+        <div class="cover-container">
+
+            <div class="masthead clearfix">
             </div>
-            <div class="modal-body">
-                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills1" role="tab"
-                           aria-controls="pills-home" aria-expanded="true">Player 1</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills2" role="tab"
-                           aria-controls="pills-profile" aria-expanded="true">Player 2</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills1" role="tabpanel"
-                         aria-labelledby="pills-home-tab">
-                        <div class="form-group">
-                            <label for="exampleFormControlSelect2">Player 1</label>
-                            <select multiple class="form-control" id="exampleFormControlSelect2">
-                                <option>Route des pommes</option>
-                                <option>Route des poires</option>
-                                <option>Route des cerises</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleFormControlSelect3">You</label>
-                            <select multiple class="form-control" id="exampleFormControlSelect3">
-                                <option>Gare de Cornavin</option>
-                                <option>Gare à toi</option>
-                                <option>Gare toi à gauche</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="pills2" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        ...
-                    </div>
-                </div>
+            <div class="inner cover">
+                <h1 class="cover-heading">Rends l'argent</h1>
+                <p class="lead">
+                    <a href="play.html" class="btn btn-lg btn-primary btn-block">Play</a>
+                </p>
+                <p class="lead">
+                    <a href="configuration.html" class="btn btn-lg btn-primary btn-block">Configure</a>
+                </p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Deal</button>
+            <div class="mastfoot">
             </div>
         </div>
     </div>
 </div>
-
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#auction">
-    Auction
-</button>
-
 </body>
-<script>
-    let imgTrain = new Image();
-    imgTrain.src = 'img/train.png';
-    let imgChance = new Image();
-    imgChance.src = 'img/chance.png';
-    let imgCommunityChest = new Image();
-    imgCommunityChest.src = 'img/chest.png';
-    let imgTax = new Image();
-    imgTax.src = 'img/tax.png';
-    let imgHouse = new Image();
-    imgHouse.src = 'img/house.png';
-    let imgHotel = new Image();
-    imgHotel.src = 'img/hotel.png';
-    let board = Board();
-
-
-    function drawCircle(ctx, x, y, radius) {
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-        ctx.fill();
-    }
-
-    let canvas = document.getElementById("canvas");
-    let ctx = canvas.getContext("2d");
-
-
-    ctx.fillStyle = "green";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = "12px Arial";
-
-    const squareSize = 90;
-    const rectangleWidth = 58;
-    let y = 0;
-    let x = 0;
-    let directionX = 1;
-    let directionY = 0;
-    for (let i = 0; i < 40; i++) {
-        let cell = board.squares()[i];
-        if (i % 2 === 0) {
-            ctx.fillStyle = "yellow";
-        } else {
-            ctx.fillStyle = "tomato";
-        }
-
-        if (i % 10 === 0) {
-            if (directionX === -1) {
-                x -= squareSize - rectangleWidth;
-            }
-            ctx.fillRect(x, y, squareSize, squareSize);
-            ctx.fillStyle = "black";
-            ctx.fillText(cell.name(), x, y + 20);
-            if (directionX === 1 && i !== 0) {
-                directionX = 0;
-                directionY = 1;
-                y += squareSize;
-            } else if (directionY === 1) {
-                directionX = -1;
-                directionY = 0;
-                x -= rectangleWidth;
-            } else if (directionX === -1) {
-                directionX = 0;
-                directionY = -1;
-                y -= rectangleWidth;
-            } else if (directionX === 1) {
-                x += squareSize;
-            }
-        } else {
-            if (directionX === 1 || directionX === -1) {
-                ctx.fillRect(x, y, rectangleWidth, squareSize);
-                if (cell.isBuyable()) {
-                    if (directionX === 1) {
-                        ctx.fillStyle = cell.owner.color();
-                        drawCircle(ctx, x + rectangleWidth / 2, y + squareSize + 10, 5);
-                    } else {
-                        ctx.fillStyle = cell.owner.color();
-                        drawCircle(ctx, x + rectangleWidth / 2, y - 10, 5);
-                    }
-                }
-                if (cell.isProperty()) {
-                    if (directionX === 1) {
-                        ctx.fillStyle = cell.color();
-                        ctx.fillRect(x + 10, y + squareSize - 20, rectangleWidth - 20, 10);
-                    } else {
-                        ctx.fillStyle = cell.color();
-                        ctx.fillRect(x + 10, y + 10, rectangleWidth - 20, 10);
-                    }
-                } else if (cell.isTrain()) {
-                    ctx.drawImage(imgTrain, x, y);
-                } else if (cell.isChance()) {
-                    ctx.drawImage(imgChance, x, y);
-                } else if (cell.isCommunityChest()) {
-                    ctx.drawImage(imgCommunityChest, x, y);
-                } else if (cell.isTax()) {
-                    ctx.drawImage(imgTax, x, y);
-                }
-
-                x += rectangleWidth * directionX;
-                y += squareSize * directionY;
-
-            } else if (directionY === 1 || directionY === -1) {
-                ctx.fillRect(x, y, squareSize, rectangleWidth);
-                if (cell.isBuyable()) {
-                    if (directionY === 1) {
-                        ctx.fillStyle = cell.owner.color();
-                        drawCircle(ctx, x - 10, y + rectangleWidth / 2, 5);
-                    } else {
-                        ctx.fillStyle = cell.owner.color();
-                        drawCircle(ctx, x + squareSize + 10, y + rectangleWidth / 2, 5);
-                    }
-                }
-                if (cell.isProperty()) {
-                    if (directionY === 1) {
-                        ctx.fillStyle = cell.color();
-                        ctx.fillRect(x + 10, y + 10, 10, rectangleWidth - 20);
-                    } else {
-                        ctx.fillStyle = cell.color();
-                        ctx.fillRect(x + squareSize - 20, y + 10, 10, rectangleWidth - 20);
-                    }
-                } else if (cell.isTrain()) {
-                    ctx.drawImage(imgTrain, x, y);
-                } else if (cell.isChance()) {
-                    ctx.drawImage(imgChance, x, y);
-                } else if (cell.isCommunityChest()) {
-                    ctx.drawImage(imgCommunityChest, x, y);
-                } else if (cell.isTax()) {
-                    ctx.drawImage(imgTax, x, y);
-                }
-                x += squareSize * directionX;
-                y += rectangleWidth * directionY;
-            }
-        }
-    }
-
-    $('#exampleModal').on('show.bs.modal', function () {
-
-        const modal = $(this);
-        modal.find('.modal-title').text('yolo swag');
-        //modal.find('.modal-body input').val(recipient);
-    })
-
-</script>
 </html>
+

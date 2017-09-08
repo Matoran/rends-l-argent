@@ -96,10 +96,50 @@ function play() {
             }
 
             if (t.name === "trade") {
-                $("#trade").modal();
+                if (tabAction[i].name === "trade") {
+                    let tabs = $("#pills-tab");
+                    let content = $("#pills-tabContent");
+                    let selectActivePlayer = $("#selectActivePlayer");
+                    selectActivePlayer.empty();
+                    tabs.empty();
+                    content.empty();
+                    let first = true;
+                    players.forEach(function (player, i) {
+                        if (i !== board.activePlayer()) {
+                            tabs.append(`
+                                <li class="nav-item">
+                                    <a class="nav-link${first ? ' active' : ''}" id="pills-home-tab" data-toggle="pill" href="#pills${i}" role="tab"
+                                aria-controls="pills-home" aria-expanded="true">${player.color()}</a>
+                                </li>
+                            `);
+                            text = `
+                                <div class="tab-pane fade${first ? ' show active' : ''}" id="pills${i}" role="tabpanel"
+                                 aria-labelledby="pills-home-tab">
+                                <div class="form-group">
+                                <label for="select${i}">${player.color()}</label>
+                                <select multiple class="form-control" id="select${i}">
+                            `;
+                            player.properties().forEach(function (property) {
+                                text += `<option value="">${property.name()}</option>`;
+                            });
+                            text += `</select></div><div class="form-group">
+                            <label for="money${i}">Money</label>
+                            <input type="number" class="form-control" id="money${i}"/>
+                            </div></div>`;
+                            first = false;
+                            content.append(text);
+
+                        } else {
+                            player.properties().forEach(function (property) {
+                                selectActivePlayer.append(`<option value="">${property.name()}</option>`);
+                            });
+                        }
+                    });
+
+                    $('#trade').modal();
+                }
+
             }
-
-
             movePlayers();
             play();
         });
@@ -122,4 +162,12 @@ function finishAuction() {
     board.finishAuction(buyer, $("#priceAuction").val());
     tabSquare[board.players()[board.activePlayer()].position()].circle.commandCircle.style = board.players()[buyer].color();
     stage.update();
+}
+
+function debug() {
+    players.forEach(function (player) {
+        player.properties().forEach(function (property) {
+            console.log(player.color() + " " + property.name());
+        });
+    });
 }

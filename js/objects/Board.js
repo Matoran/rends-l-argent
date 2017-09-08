@@ -134,7 +134,7 @@ function Board() {
         console.log("player " + (activePlayer + 1) + " bought case " + squares[position].name());
         players[activePlayer].pay(squares[position].price());
         squares[position].owner = players[activePlayer];
-        players[activePlayer].addProperty(position);
+        players[activePlayer].addProperty(squares[position]);
         midTurn = false;
         endTurn = !double;
         return {
@@ -217,8 +217,9 @@ function Board() {
                 } else {
                     actionsList.push(play);
                 }
+                actionsList.push(trade);
             }
-            actionsList.push(trade);
+
             return actionsList;
         },
         players: () => players,
