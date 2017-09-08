@@ -1,26 +1,26 @@
 "use strict";
 
 function Board() {
-    let squares = [Square("Départ"), Property("Rue des pommes", 60, "red"),
-        Property("Rue des figues", 60, "red"), Station("Gare de Cornavin", 200),
+    let squares = [Square("Départ"), Property("Rue Ptur", 60, "red"),
+        Property("Chemin Fou", 60, "red"), Station("Gare Toila", 200),
         CommunityChest(), Tax("Impôts", 200),
-        Station("Gare de Coppet", 200), Chance(),
-        Property("Rue des poires", 60, "red"), Property("Rue des bananes", 60, "red"),
+        Station("Gare Atoi", 200), Chance(),
+        Property("Rue de Marine", 60, "red"), Property("Rue Tule", 60, "red"),
         Square("Prison"), Property("Rue des pommes", 60, "red"),
-        Property("Rue des poires", 60, "blue"), Property("Rue des bananes", 60, "blue"),
-        Station("Gare de Carouge", 200), Chance(),
-        Property("Rue des figues", 60, "blue"), Station("Gare de Lancy", 200),
+        Property("Rue Everlor", 60, "blue"), Property("Rue Tiland", 60, "blue"),
+        Station("Gare Toi-A-Gauche", 200), Chance(),
+        Property("Rue Rahl", 60, "blue"), Station("Gare Oloux", 200),
         CommunityChest(), Tax("Impôts", 200),
-        Square("Aller en prison"), Property("Rue des pommes", 60, "yellow"),
-        Property("Rue des figues", 60, "yellow"), Station("Gare de Lancy", 200),
-        Property("Rue des poires", 60, "yellow"), Property("Rue des bananes", 60, "yellow"),
+        Square("Aller en prison"), Property("Rue Pert-Grint", 60, "yellow"),
+        Property("Rue de la Fortune ", 60, "yellow"), Station("Gare Avoux", 200),
+        Property("Rue Bixcube", 60, "yellow"), Property("Avenue Noussome", 60, "yellow"),
         CommunityChest(), Tax("Impôts", 200),
-        Station("Gare de Carouge", 200), Chance(),
+        Station("Gare de Lyon", 200), Chance(),
         Square("Parking"), Property("Rue des pommes", 60, "green"),
-        Property("Rue des figues", 60, "green"), Station("Gare de Balexert", 200),
-        Property("Rue de loin", 60, "red"), Property("Rue des bananes", 60, "green"),
+        Property("Rue Minet", 60, "green"), Station("Gare Houx", 200),
+        Property("Rue Bicon", 60, "red"), Property("Gust Avenue", 60, "green"),
         CommunityChest(), Tax("Impôts", 200),
-        Station("Gare de Genève", 200), Chance()
+        Station("Gare Gamel", 200), Chance()
     ];
 
     function goToNearestStation() {
