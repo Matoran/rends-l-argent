@@ -90,8 +90,7 @@ let y = 0;
 let x = 0;
 let directionX = 1;
 let directionY = 0;
-for (let i = 0; i < 40; i++) {
-    let cell = board.squares()[i];
+board.squares().forEach(function (cell, i) {
     if (i % 2 === 0) {
         color = "#3B8686";
     } else {
@@ -185,7 +184,8 @@ for (let i = 0; i < 40; i++) {
             y += rectangleWidth * directionY;
         }
     }
-}
+});
+
 
 tabSquare.forEach(function (s) {
     stage.addChild(s.label);

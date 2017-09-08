@@ -12,15 +12,15 @@ function squareOnClick(identifiant) {
     name.style.display = "block";
     price.style.display = "block";
     color.style.display = "block";
-    let card = document.getElementById('typeCarte');
+    let card = document.getElementById("typeCarte");
     card.selectedIndex = "Propriete";
-    $('#configuration').modal();
+    $("#configuration").modal();
 }
 
 //----------Form--------------------
-const card = document.getElementById('typeCarte');
+const card = document.getElementById("typeCarte");
 // change the form
-card.addEventListener('change', function () {
+card.addEventListener("change", function () {
     let name = document.getElementById("blocName");
     let price = document.getElementById("blocPrice");
     let color = document.getElementById("blocColor");
