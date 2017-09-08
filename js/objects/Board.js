@@ -89,8 +89,10 @@ function Board() {
             }
         }
         let cell = squares[players[activePlayer].position()];
+        let text = "";
         if (cell.isTax()) {
             players[activePlayer].pay(cell.price());
+            text = players[(activePlayer + 1)].color() + " pay " + cell.price() + " tax";
             console.log("Joueur " + (activePlayer + 1) + " a payé " + cell.price() + " d'impôts");
             endTurn = !double;
         } else if (cell.isBuyable() && cell.owner !== players[activePlayer]) {
@@ -101,6 +103,7 @@ function Board() {
         } else if (cell.isCommunityChest()) {
             console.log("community chest");
             let rand = random(communityChestCards.length);
+            text = communityChestCards[rand].text();
             console.log(communityChestCards[rand].text());
             communityChestCards[rand].action(players[activePlayer]);
             endTurn = !double;
@@ -112,7 +115,7 @@ function Board() {
         }
 
         return {
-            text: "",
+            text: text,
             dice1: dice1,
             dice2: dice2
         };
