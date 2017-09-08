@@ -241,8 +241,6 @@ function Board() {
                 } else if (cell.type === "tax") {
                     squares.push(Tax(cell.name, cell.price));
                 }
-                console.log(squares);
-                console.log("test");
             });
 
         },
