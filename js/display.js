@@ -90,7 +90,7 @@ let y = 0;
 let x = 0;
 let directionX = 1;
 let directionY = 0;
-board.squares().forEach(function (cell, i) {
+board.cells().forEach(function (cell, i) {
     if (i % 2 === 0) {
         color = "#3B8686";
     } else {

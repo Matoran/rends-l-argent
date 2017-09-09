@@ -134,18 +134,18 @@ function send() {
 
     if (value === "Gare") {
         tabSquare[id].img = image("img/train.png", x, y);
-        board.squares()[id] = Station(name, price);
+        board.cells()[id] = Station(name, price);
     } else if (value === "Impots et taxe") {
         tabSquare[id].img = image("img/tax.png", x, y);
-        board.squares()[id] = Tax(name, price);
+        board.cells()[id] = Tax(name, price);
     } else if (value === "Caisse de communaute") {
         tabSquare[id].img = image("img/chest.png", x, y);
-        board.squares()[id] = CommunityChest();
+        board.cells()[id] = CommunityChest();
     } else if (value === "Chance") {
         tabSquare[id].img = image("img/chance.png", x, y);
-        board.squares()[id] = Chance();
+        board.cells()[id] = Chance();
     } else if (value === "Propriete") {
-        board.squares()[id] = Property(name, price, color);
+        board.cells()[id] = Property(name, price, color);
     }
     /*else if(value === "Services publiques"){
 

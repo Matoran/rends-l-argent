@@ -48,7 +48,7 @@ function play() {
         labelText.text = board.players()[board.activePlayer()].color() + " turn";
         labelText.text += "\n\nYou have: " + board.players()[board.activePlayer()].money() + " $";
         if (tabAction[0].name === "buy") {
-            labelText.text += "\n\nThe price is: " + board.squares()[board.players()[board.activePlayer()].position()].price() + " $";
+            labelText.text += "\n\nThe price is: " + board.cells()[board.players()[board.activePlayer()].position()].price() + " $";
         }
         labelText.color = board.players()[board.activePlayer()].color();
     }
@@ -68,7 +68,7 @@ function play() {
         square.y = 440;
         square.on("click", function () {
             if (t.name === "surrender") {
-                let cell = board.squares()[players[board.activePlayer()].position()];
+                let cell = board.cells()[players[board.activePlayer()].position()];
                 if (cell.isBuyable()) {
                     players[board.activePlayer()].properties().forEach(function (property) {
                         cell.owner.addProperty(property);
@@ -133,7 +133,7 @@ function play() {
                                 aria-controls="pills-home" aria-expanded="true">${player.color()}</a>
                                 </li>
                             `);
-                            text = `
+                            let text = `
                                 <div class="tab-pane fade${first ? ' show active' : ''}" id="pills${i}" role="tabpanel"
                                  aria-labelledby="pills-home-tab">
                                 <div class="form-group">
@@ -147,7 +147,7 @@ function play() {
                             });
                             text += `</select></div><div class="form-group">
                             <label for="money${i}">Money</label>
-                            <input type="number" class="form-control" id="money${i}"/>
+                            <input type="number" class="form-control" id="money${i}" value="0"/>
                             </div></div>`;
                             first = false;
                             content.append(text);
@@ -200,10 +200,10 @@ function finishTrade() {
 
     player1.properties.forEach(function (property) {
         console.log(property);
-        tabSquare[board.squares()[property].id()].circle.commandCircle.style = player2.identity.color();
+        tabSquare[board.cells()[property].id()].circle.commandCircle.style = player2.identity.color();
     });
     player2.properties.forEach(function (property) {
-        tabSquare[board.squares()[property].id()].circle.commandCircle.style = players[board.activePlayer()].color();
+        tabSquare[board.cells()[property].id()].circle.commandCircle.style = players[board.activePlayer()].color();
     });
     stage.update();
     console.log(player1);
@@ -211,10 +211,14 @@ function finishTrade() {
     board.finishTrade(player1, player2);
 }
 
-function debug() {
-    players.forEach(function (player) {
-        player.properties().forEach(function (property) {
-            console.log(player.color() + " " + property.name());
-        });
-    });
+function finishAction() {
+
+}
+
+function squareOnClick(identifiant) {
+    $("#id").val(identifiant);
+    let cell = board.cells()[identifiant];
+    if (cell.isBuyable() && cell.owner === players[board.activePlayer()]) {
+        console.log("Ah!");
+    }
 }

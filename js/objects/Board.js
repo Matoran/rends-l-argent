@@ -1,7 +1,7 @@
 "use strict";
 
 function Board() {
-    let squares = [Square("Départ"), Property("Rue Ptur", 60, "red"),
+    let cells = [Square("Départ"), Property("Rue Ptur", 60, "red"),
         Property("Chemin Fou", 60, "red"), Station("Gare Toila", 200),
         CommunityChest(), Tax("Impôts", 200),
         Station("Gare Atoi", 200), Chance(),
@@ -88,7 +88,7 @@ function Board() {
                 end();
             }
         }
-        let cell = squares[players[activePlayer].position()];
+        let cell = cells[players[activePlayer].position()];
         let text = "";
         if (cell.isTax()) {
             players[activePlayer].pay(cell.price());
@@ -137,11 +137,11 @@ function Board() {
 
     function buy() {
         let position = players[activePlayer].position();
-        let text = "player " + (activePlayer + 1) + " bought case " + squares[position].name();
-        console.log("player " + (activePlayer + 1) + " bought case " + squares[position].name());
-        players[activePlayer].pay(squares[position].price());
-        squares[position].owner = players[activePlayer];
-        players[activePlayer].addProperty(squares[position]);
+        let text = "player " + (activePlayer + 1) + " bought case " + cells[position].name();
+        console.log("player " + (activePlayer + 1) + " bought case " + cells[position].name());
+        players[activePlayer].pay(cells[position].price());
+        cells[position].owner = players[activePlayer];
+        players[activePlayer].addProperty(cells[position]);
         midTurn = false;
         endTurn = !double;
         return {
@@ -157,11 +157,11 @@ function Board() {
 
     function pay() {
         let position = players[activePlayer].position();
-        let price = squares[position].price();
+        let price = cells[position].price();
         players[activePlayer].pay(price);
-        squares[position].owner.receive(price);
-        let text = players[activePlayer].color() + " pay " + price + " to " + squares[position].owner.color();
-        console.log(players[activePlayer].color() + " pay " + price + " to " + squares[position].owner.color());
+        cells[position].owner.receive(price);
+        let text = players[activePlayer].color() + " pay " + price + " to " + cells[position].owner.color();
+        console.log(players[activePlayer].color() + " pay " + price + " to " + cells[position].owner.color());
         midTurn = false;
         endTurn = !double;
         return {
@@ -191,7 +191,7 @@ function Board() {
 
 
     return {
-        squares: () => squares,
+        cells: () => cells,
         actions: () => {
             let actionsList = [];
             if (players.length === 1) {
@@ -204,12 +204,12 @@ function Board() {
 
             } else {
                 if (midTurn) {
-                    if (squares[players[activePlayer].position()].owner === bank) {
-                        if (players[activePlayer].money() >= squares[players[activePlayer].position()].price()) {
+                    if (cells[players[activePlayer].position()].owner === bank) {
+                        if (players[activePlayer].money() >= cells[players[activePlayer].position()].price()) {
                             actionsList.push(buy);
                         }
                         actionsList.push(auction);
-                    } else if (players[activePlayer].money() >= squares[players[activePlayer].position()].rent()) {
+                    } else if (players[activePlayer].money() >= cells[players[activePlayer].position()].rent()) {
                         actionsList.push(pay);
                     } else {
                         actionsList.push(surrender);
@@ -233,42 +233,42 @@ function Board() {
         },
         players: () => players,
         activePlayer: () => activePlayer,
-        toJSON: () => JSON.stringify(squares),
+        toJSON: () => JSON.stringify(cells),
         fromJSON(json) {
-            squares = [];
+            cells = [];
             id = 0;
             let test = JSON.parse(json);
             test.forEach(function (cell) {
                 if (cell.type === "square") {
-                    squares.push(Square(cell.name));
+                    cells.push(Square(cell.name));
                 } else if (cell.type === "property") {
-                    squares.push(Property(cell.name, cell.price, cell.color));
+                    cells.push(Property(cell.name, cell.price, cell.color));
                 } else if (cell.type === "station") {
-                    squares.push(Station(cell.name, cell.price));
+                    cells.push(Station(cell.name, cell.price));
                 } else if (cell.type === "chance") {
-                    squares.push(Chance());
+                    cells.push(Chance());
                 } else if (cell.type === "communitychest") {
-                    squares.push(CommunityChest());
+                    cells.push(CommunityChest());
                 } else if (cell.type === "tax") {
-                    squares.push(Tax(cell.name, cell.price));
+                    cells.push(Tax(cell.name, cell.price));
                 }
             });
 
         },
         finishAuction(buyer, price) {
-            squares[players[activePlayer].position()].owner = players[buyer];
+            cells[players[activePlayer].position()].owner = players[buyer];
             players[buyer].pay(price);
         },
         finishTrade(player1, player2) {
-            players[activePlayer].pay(player1.money);
-            players[activePlayer].receive(player2.money);
-            player2.identity.pay(player2.money);
-            player2.identity.receive(player1.money);
+            players[activePlayer].pay(parseInt(player1.money));
+            players[activePlayer].receive(parseInt(player2.money));
+            player2.identity.pay(parseInt(player2.money));
+            player2.identity.receive(parseInt(player1.money));
             player1.properties.forEach(function (property) {
-                squares[property].owner = player2.identity;
+                cells[property].owner = player2.identity;
             });
             player2.properties.forEach(function (property) {
-                squares[property].owner = players[activePlayer];
+                cells[property].owner = players[activePlayer];
             });
         }
     };
