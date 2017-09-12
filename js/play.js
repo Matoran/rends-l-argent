@@ -219,6 +219,24 @@ function squareOnClick(identifiant) {
     $("#id").val(identifiant);
     let cell = board.cells()[identifiant];
     if (cell.isBuyable() && cell.owner === players[board.activePlayer()]) {
+        let action = $("#action");
+        action.empty();
+        let html = "";
+        if (cell.isProperty()) {
+            if (cell.houses() > 0) {
+                console.log("sell houses");
+            } else {
+                html += '<button type="button" class="btn btn-primary" onclick="mortgage()">Mortgage</button>';
+            }
+        }
         console.log("Ah!");
+        action.find(".modal-body").append(html);
+        action.modal();
     }
+
+}
+
+function mortgage() {
+    let id = $("#id").val();
+    let cell = board.cells()[id].mortgage();
 }
