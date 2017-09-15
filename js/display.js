@@ -4,6 +4,20 @@
  */
 "use strict";
 
+/**
+ * Structure for square
+ * @param posx position of image on x axis
+ * @param posy position of image on y axis
+ * @param w width
+ * @param h height
+ * @param color of square
+ * @param id of square
+ * @param dx direction on x
+ * @param dy direction on y
+ * @param cell of square
+ * @returns structure square
+ *{{posx: *, posy: *, width: *, heigth: *, color: *, id: *, directionX: *, directionY: *, cell: *}}
+ */
 function strcutSquare(posx, posy, w, h, color, id, dx, dy, cell) {
     return {
         posx: posx,
@@ -18,6 +32,12 @@ function strcutSquare(posx, posy, w, h, color, id, dx, dy, cell) {
     };
 }
 
+/**
+ * Create square
+ * @param squareParam
+ * @returns {{square: *, commandeSquare: (Graphics.StrokeStyle|Graphics.StrokeDash|*), label: *, struct: *,
+ * rectangle: undefined, circle: undefined, img: undefined}}
+ */
 function square(squareParam) {
     let square = new createjs.Shape();
     let commandSquare = square.graphics.beginFill("black").command;
@@ -43,6 +63,14 @@ function square(squareParam) {
     };
 }
 
+/**
+ * Create circle
+ * @param posx position of circle on x axis
+ * @param posy position of circle on y axis
+ * @param r radius
+ * @param color of circle
+ * @returns circle {{circle: *, commandCircle: (Graphics.StrokeStyle|Graphics.StrokeDash|*)}}
+ */
 function circle(posx, posy, r, color) {
     let circle = new createjs.Shape();
     let commandeCircle = circle.graphics.beginFill(color).command;
@@ -56,6 +84,13 @@ function circle(posx, posy, r, color) {
     };
 }
 
+/**
+ * Create image
+ * @param src source of image
+ * @param posx position of image on x axis
+ * @param posy position of image on y axis
+ * @returns image
+ */
 function image(src, posx, posy) {
     let img = new Image();
     img.src = src;
@@ -70,6 +105,13 @@ function image(src, posx, posy) {
     return img;
 }
 
+/**
+ * Create text
+ * @param txt text
+ * @param posx position of text on x axis
+ * @param posy position of text on y axis
+ * @param id of image
+ */
 function text(txt, posx, posy, id) {
     tabSquare[id].label.text = txt;
     tabSquare[id].label.x = posx;
