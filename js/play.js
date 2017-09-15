@@ -185,7 +185,7 @@ function play() {
 }
 
 /**
- *
+ * collect buyer and price from form and update board
  */
 function finishAuction() {
     let buyer = $("#buyer").val();
@@ -230,7 +230,8 @@ function finishAction() {
 }
 
 /**
- *
+ * action from owner to cell
+ * todo need more code :D
  * @param identifiant
  */
 function squareOnClick(identifiant) {
@@ -238,7 +239,6 @@ function squareOnClick(identifiant) {
     let cell = board.cells()[identifiant];
     if (cell.isBuyable() && cell.owner === players[board.activePlayer()]) {
         let action = $("#action");
-        action.empty();
         let html = "";
         if (cell.isProperty()) {
             if (cell.houses() > 0) {
@@ -248,6 +248,7 @@ function squareOnClick(identifiant) {
             }
         }
         console.log("Ah!");
+        action.find(".modal-body").empty();
         action.find(".modal-body").append(html);
         action.modal();
     }
@@ -255,9 +256,9 @@ function squareOnClick(identifiant) {
 }
 
 /**
- *
+ * make cell mortgaged
  */
 function mortgage() {
     let id = $("#id").val();
-    let cell = board.cells()[id].mortgage();
+    board.cells()[id].mortgage();
 }
