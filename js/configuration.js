@@ -4,6 +4,10 @@
  */
 "use strict";
 
+/**
+ * Display the form
+ * @param identifiant type of case
+ */
 function squareOnClick(identifiant) {
     cleanForm();
     let type = document.getElementById("blocType");
@@ -57,6 +61,9 @@ card.addEventListener("change", function () {
     }
 });
 
+/**
+ * Clean the form
+ */
 function cleanForm() {
     let type = document.getElementById("blocType");
     let name = document.getElementById("blocName");
@@ -74,6 +81,9 @@ function cleanForm() {
     taxe.style.display = "none";
 }
 
+/**
+ * send the information when we confirm the form
+ */
 function send() {
     let id = document.getElementById("id").value;
     let value = card.options[card.selectedIndex].value;
@@ -160,6 +170,9 @@ function send() {
     cleanForm();
 }
 
+/**
+ * Save board and go to play page
+ */
 function start() {
     localStorage.setItem("config", board.toJSON());
     $("#configForm").submit();

@@ -5,11 +5,15 @@
 "use strict";
 
 //----------Move Player--------
+//Array of tokens
 let tabTokens = [];
 board.players().forEach(function (p) {
     tabTokens.push(circle(tabSquare[p.position()].square.x + 25, tabSquare[p.position()].square.y + 25, 7, p.color()));
 });
 
+/**
+ * Function for move player
+ */
 function movePlayers() {
     tabTokens.forEach(function (t, i) {
         t.circle.x = tabSquare[board.players()[i].position()].square.x + 25 + (i * 8);
@@ -28,6 +32,12 @@ labelText.y = 120;
 let img = new Image();
 let img2 = new Image();
 
+/**
+ * Draw an image
+ * @param posx position of image on x axis
+ * @param posy position of image on y axis
+ * @param event action on load
+ */
 function drawImage(posx, posy, event) {
     let image = event.target;
     let bitmap = new createjs.Bitmap(image);
@@ -46,6 +56,9 @@ img2.onload = function (event) {
 let test = true;
 play();
 
+/**
+ * All the action of the game
+ */
 function play() {
     let tabAction = board.actions();
     if (test) {
