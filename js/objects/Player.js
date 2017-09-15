@@ -1,5 +1,14 @@
+/**
+ * @author Marco Rodrigues Lopes
+ * @date august and september 2017
+ */
 "use strict";
 
+/**
+ * @param color
+ * @returns {{receive: (function(*)), pay: (function(*)), position: (function(): number), forward: (function(*)), color: (function(): *), isInJail: (function(): boolean), goJail: (function()), jailTurn: (function()), goOutJail: (function()), money: (function(): number), receiveCard: (function()), hasCard: (function(): boolean), useCard: (function()), addProperty: (function(*=): Number), removeProperty: (function(*)), properties: (function(): Array)}}
+ * @constructor
+ */
 function Player(color) {
     let money = 1500;
     let position = 0;
@@ -40,6 +49,7 @@ function Player(color) {
         hasCard: () => cards > 0,
         useCard() {
             cards -= 1;
+            goOutJail();
         },
         addProperty: (id) => properties.push(id),
         removeProperty(id) {

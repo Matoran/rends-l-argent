@@ -1,3 +1,7 @@
+/**
+ * @author Marco Rodrigues Lopes and Cyril Iseli
+ * @date august and september 2017
+ */
 "use strict";
 
 function squareOnClick(identifiant) {

@@ -1,3 +1,7 @@
+/**
+ * @author Marco Rodrigues Lopes and Cyril Iseli
+ * @date august and september 2017
+ */
 "use strict";
 
 //----------Move Player--------
@@ -180,6 +184,9 @@ function play() {
     });
 }
 
+/**
+ *
+ */
 function finishAuction() {
     let buyer = $("#buyer").val();
     board.finishAuction(buyer, $("#priceAuction").val());
@@ -187,6 +194,9 @@ function finishAuction() {
     stage.update();
 }
 
+/**
+ * collect data from form and configure player 1 and 2
+ */
 function finishTrade() {
     let player1 = {
         properties: $("#selectActivePlayer").val(),
@@ -198,6 +208,7 @@ function finishTrade() {
         money: $('.show.active input[type="number"]').val()
     };
 
+    //change color from properties
     player1.properties.forEach(function (property) {
         console.log(property);
         tabSquare[board.cells()[property].id()].circle.commandCircle.style = player2.identity.color();
@@ -211,10 +222,17 @@ function finishTrade() {
     board.finishTrade(player1, player2);
 }
 
+/**
+ * todo mortgage, buy and sell houses
+ */
 function finishAction() {
 
 }
 
+/**
+ *
+ * @param identifiant
+ */
 function squareOnClick(identifiant) {
     $("#id").val(identifiant);
     let cell = board.cells()[identifiant];
@@ -236,6 +254,9 @@ function squareOnClick(identifiant) {
 
 }
 
+/**
+ *
+ */
 function mortgage() {
     let id = $("#id").val();
     let cell = board.cells()[id].mortgage();

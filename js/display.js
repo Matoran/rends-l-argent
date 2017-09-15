@@ -1,3 +1,7 @@
+/**
+ * @author Marco Rodrigues Lopes and Cyril Iseli
+ * @date august and september 2017
+ */
 "use strict";
 
 function strcutSquare(posx, posy, w, h, color, id, dx, dy, cell) {
@@ -90,13 +94,14 @@ let y = 0;
 let x = 0;
 let directionX = 1;
 let directionY = 0;
+
 board.cells().forEach(function (cell, i) {
     if (i % 2 === 0) {
         color = "#3B8686";
     } else {
         color = "#0B486B";
     }
-
+    //if it's a square
     if (i % 10 === 0) {
         if (directionX === -1) {
             x -= squareSize - rectangleWidth;
@@ -104,6 +109,7 @@ board.cells().forEach(function (cell, i) {
         tabSquare.push(square(strcutSquare(x, y, squareSize, squareSize, color, i, directionX, directionY, cell)));
         color = "black";
         text(cell.name(), x, y + 20, i);
+        //change direction of the cells
         if (directionX === 1 && i !== 0) {
             directionX = 0;
             directionY = 1;

@@ -1,6 +1,21 @@
+/**
+ * @author Marco Rodrigues Lopes and Cyril Iseli
+ * @date august and september 2017
+ */
 "use strict";
 
+/**
+ * Class Board is the game engine
+ * @returns public functions
+ * @constructor
+ */
 function Board() {
+    let activePlayer = 0;
+    let endTurn = false;
+    let midTurn = false;
+    let same = 0;
+    let double = false;
+
     let cells = [Square("Départ"), Property("Rue Ptur", 60, "red"),
         Property("Chemin Fou", 60, "red"), Station("Gare Toila", 200),
         CommunityChest(), Tax("Impôts", 200),
@@ -23,18 +38,11 @@ function Board() {
         Station("Gare Gamel", 200), Chance()
     ];
 
-    function goToNearestStation() {
-    }
-
-    function goToNearestUtility() {
-
-    }
-
     let chanceCards = [
-        Card("Avancez de 3 cases", (player) => player.forward(3)),
-        Card("Reculez de 3 cases", (player) => player.forward(-3)),
+        Card("Avancez de 3 cases", (player) => goToNearestStation(3)),
+        Card("Reculez de 3 cases", (player) => goToNearestStation(-3)),
         Card("Allez à la gare la plus proche", goToNearestStation()),
-        Card("Allez à l'entreprise publique la plus proche", goToNearestUtility()),
+        Card("Allez à l'entreprise publique la plus proche", goToNearestStation()),
     ];
 
     let communityChestCards = [
@@ -43,15 +51,30 @@ function Board() {
         Card("Accident de moto payez les réparations 300$", (player) => player.pay(300)),
         Card("Vous gagnez un prix dans un jeu à gratter, recevez 800$", (player) => player.receive(800))
     ];
-    let activePlayer = 0;
-    let endTurn = false;
-    let midTurn = false;
-    let same = 0;
-    let double = false;
 
+    /**
+     * forward until the cell is a train station
+     */
+    function goToNearestStation() {
+        while (!cells[players[activePlayer].position()].isTrain()) {
+            players[activePlayer].forward(1);
+        }
+    }
+
+    /**
+     * forward until the cell is a utility
+     */
+    function goToNearestUtility() {
+        while (!cells[players[activePlayer].position()].isUtility()) {
+            players[activePlayer].forward(1);
+        }
+    }
+
+    /**
+     * go to jail
+     */
     function jail() {
         players[activePlayer].goJail();
-        players[activePlayer].position();
         let text = "jail";
         console.log("jail");
         return {
@@ -59,6 +82,9 @@ function Board() {
         };
     }
 
+    /**
+     * end of the player turn
+     */
     function end() {
         activePlayer += 1;
         activePlayer %= players.length;
@@ -67,21 +93,31 @@ function Board() {
         console.log("end, active player = " + (activePlayer + 1));
     }
 
+    /**
+     * random function between [0 and max[
+     * @param max
+     * @returns number random
+     */
     function random(max) {
         return Math.floor(Math.random() * max);
     }
 
+    /**
+     * launch the dices and check cell type
+     */
     function play() {
-        let dice1 = Math.floor(Math.random() * 6) + 1;
-        let dice2 = Math.floor(Math.random() * 6) + 1;
+        let dice1 = random(6) + 1;
+        let dice2 = random(6) + 1;
         double = dice1 === dice2;
         console.log(!players[activePlayer].isInJail() || double);
+        //if double or not in jail then forward
         if (!players[activePlayer].isInJail() || double) {
             players[activePlayer].goOutJail();
             players[activePlayer].forward(dice1 + dice2);
         }
         console.log(dice1 + " " + dice2);
-        if (dice1 === dice2) {
+        //if double count and if count is 3 then go to jail
+        if (double) {
             same += 1;
             if (same === 3) {
                 jail();
@@ -90,11 +126,12 @@ function Board() {
         }
         let cell = cells[players[activePlayer].position()];
         let text = "";
+        //check cell type and make action from that
         if (cell.isTax()) {
             players[activePlayer].pay(cell.price());
-            text = players[activePlayer].color() + " pay " + cell.price() + " tax";
-            console.log("Joueur " + (activePlayer + 1) + " a payé " + cell.price() + " d'impôts");
             endTurn = !double;
+            text = players[activePlayer].color() + " pay " + cell.price() + " tax";
+            console.log(text);
         } else if (cell.isBuyable() && cell.owner !== players[activePlayer]) {
             midTurn = true;
         } else if (cell.isChance()) {
@@ -125,9 +162,12 @@ function Board() {
         };
     }
 
+    /**
+     * pay to go out from jail
+     */
     function payJail() {
         let text = "pay to go out of jail";
-        console.log("pay to go out of jail");
+        console.log(text);
         players[activePlayer].pay(50);
         players[activePlayer].goOutJail();
         return {
@@ -135,10 +175,21 @@ function Board() {
         };
     }
 
+    /**
+     * use card to go out from jail
+     */
+    function useCard() {
+        console.log("use card  to go out of jail");
+        players[activePlayer].useCard();
+    }
+
+    /**
+     * buy cell
+     */
     function buy() {
         let position = players[activePlayer].position();
         let text = "player " + (activePlayer + 1) + " bought case " + cells[position].name();
-        console.log("player " + (activePlayer + 1) + " bought case " + cells[position].name());
+        console.log(text);
         players[activePlayer].pay(cells[position].price());
         cells[position].owner = players[activePlayer];
         players[activePlayer].addProperty(cells[position]);
@@ -149,19 +200,25 @@ function Board() {
         };
     }
 
+    /**
+     * auction if player doesn't want to buy cell
+     */
     function auction() {
         console.log("auction");
         midTurn = false;
         endTurn = !double;
     }
 
+    /**
+     * pay tax from cell to other player
+     */
     function pay() {
         let position = players[activePlayer].position();
         let price = cells[position].price();
         players[activePlayer].pay(price);
         cells[position].owner.receive(price);
         let text = players[activePlayer].color() + " pay " + price + " to " + cells[position].owner.color();
-        console.log(players[activePlayer].color() + " pay " + price + " to " + cells[position].owner.color());
+        console.log(text);
         midTurn = false;
         endTurn = !double;
         return {
@@ -169,24 +226,28 @@ function Board() {
         }
     }
 
-    function useCard() {
-        console.log("use card  to go out of jail");
-    }
-
+    /**
+     * delete player from players
+     */
     function surrender() {
         console.log("surrender");
-
         players.splice(activePlayer, 1);
         activePlayer -= 1;
         end();
     }
 
+    /**
+     * trade action
+     */
     function trade() {
         console.log("trade");
     }
 
+    /**
+     * just win when you are the only one :)
+     */
     function win() {
-        console.log("win motherfucker");
+        console.log("win");
     }
 
 
@@ -194,21 +255,26 @@ function Board() {
         cells: () => cells,
         actions: () => {
             let actionsList = [];
+            //win when one player left
             if (players.length === 1) {
                 actionsList.push(win);
                 return actionsList;
             }
+            //try to be positive or surrender
             if (players[activePlayer].money() < 0) {
                 actionsList.push(surrender);
                 actionsList.push(trade);
 
             } else {
                 if (midTurn) {
+                    //if the cell doesn't have owner
                     if (cells[players[activePlayer].position()].owner === bank) {
+                        //if player can buy cell
                         if (players[activePlayer].money() >= cells[players[activePlayer].position()].price()) {
                             actionsList.push(buy);
                         }
                         actionsList.push(auction);
+                        //if cell have owner
                     } else if (players[activePlayer].money() >= cells[players[activePlayer].position()].rent()) {
                         actionsList.push(pay);
                     } else {
@@ -216,6 +282,7 @@ function Board() {
                     }
                 } else if (endTurn) {
                     actionsList.push(end);
+                    //manage jail
                 } else if (players[activePlayer].isInJail()) {
                     if (players[activePlayer].hasCard()) {
                         actionsList.push(useCard);
@@ -233,7 +300,14 @@ function Board() {
         },
         players: () => players,
         activePlayer: () => activePlayer,
+        /**
+         * save board to json
+         */
         toJSON: () => JSON.stringify(cells),
+        /**
+         * restore board from json
+         * @param json
+         */
         fromJSON(json) {
             cells = [];
             id = 0;
@@ -255,10 +329,20 @@ function Board() {
             });
 
         },
+        /**
+         * finish auction update owner and money
+         * @param buyer
+         * @param price
+         */
         finishAuction(buyer, price) {
             cells[players[activePlayer].position()].owner = players[buyer];
             players[buyer].pay(price);
         },
+        /**
+         * finish trade, swap contents from player 1 and 2 (selected content)
+         * @param player1
+         * @param player2
+         */
         finishTrade(player1, player2) {
             players[activePlayer].pay(parseInt(player1.money));
             players[activePlayer].receive(parseInt(player2.money));

@@ -1,5 +1,17 @@
+/**
+ * @author Marco Rodrigues Lopes
+ * @date august and september 2017
+ */
 "use strict";
 
+/**
+ * class Property
+ * @param name of the cell
+ * @param price of the cell
+ * @param color of the cell family
+ * @returns Property object
+ * @constructor
+ */
 function Property(name, price, color) {
     let square = Buyable(name, price);
     let houses = 0;

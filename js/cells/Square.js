@@ -1,5 +1,15 @@
+/**
+ * @author Marco Rodrigues Lopes
+ * @date august and september 2017
+ */
 "use strict";
 
+/**
+ * class Square
+ * @param name of the cell
+ * @returns Square object
+ * @constructor
+ */
 function Square(name) {
     let cell = Cell();
     cell.name = () => name;
