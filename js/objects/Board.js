@@ -38,20 +38,6 @@ function Board() {
         Station("Gare Gamel", 200), Chance()
     ];
 
-    let chanceCards = [
-        Card("Avancez de 3 cases", (player) => goToNearestStation(3)),
-        Card("Reculez de 3 cases", (player) => goToNearestStation(-3)),
-        Card("Allez à la gare la plus proche", goToNearestStation()),
-        Card("Allez à l'entreprise publique la plus proche", goToNearestStation()),
-    ];
-
-    let communityChestCards = [
-        Card("Payez votre assurance maladie 500$", (player) => player.pay(500)),
-        Card("Votre employeur a doublé votre salaire ce mois, recevez 2000$", (player) => player.pay(2000)),
-        Card("Accident de moto payez les réparations 300$", (player) => player.pay(300)),
-        Card("Vous gagnez un prix dans un jeu à gratter, recevez 800$", (player) => player.receive(800))
-    ];
-
     /**
      * forward until the cell is a train station
      */
@@ -61,14 +47,20 @@ function Board() {
         }
     }
 
-    /**
-     * forward until the cell is a utility
-     */
-    function goToNearestUtility() {
-        while (!cells[players[activePlayer].position()].isUtility()) {
-            players[activePlayer].forward(1);
-        }
-    }
+    let chanceCards = [
+        Card("Avancez de 3 cases", (player) => player.forward(3)),
+        Card("Reculez de 3 cases", (player) => player.forward(-3)),
+        Card("Allez à la gare la plus proche", goToNearestStation)
+    ];
+
+    let communityChestCards = [
+        Card("Payez votre assurance maladie 500$", (player) => player.pay(500)),
+        Card("Votre employeur a doublé votre salaire ce mois, recevez 2000$", (player) => player.receive(2000)),
+        Card("Accident de moto payez les réparations 300$", (player) => player.pay(300)),
+        Card("Vous gagnez un prix dans un jeu à gratter, recevez 800$", (player) => player.receive(800))
+    ];
+
+
 
     /**
      * go to jail
@@ -141,6 +133,7 @@ function Board() {
             console.log(chanceCards[rand].text());
             chanceCards[rand].action(players[activePlayer]);
             endTurn = !double;
+            midTurn = true;
         } else if (cell.isCommunityChest()) {
             console.log("community chest");
             let rand = random(communityChestCards.length);
